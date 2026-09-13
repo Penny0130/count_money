@@ -10,7 +10,7 @@
         
         body, html {
             font-family: 'Noto Sans TC', sans-serif;
-            background-color: #f0fdf4; /* 改為與遊戲一致的淺色背景，解決手機版黑邊問題 */
+            background-color: #f0fdf4;
             margin: 0;
             padding: 0;
             width: 100vw;
@@ -23,16 +23,13 @@
             -webkit-user-select: none;
         }
 
-        /* 遊戲畫布：固定 1280x720 (16:9)，由 JS 自動縮放適配電腦與手機 */
+        /* 手機與電腦完全滿版響應式容器 */
         #game-wrapper {
-            width: 1280px;
-            height: 720px;
-            background-color: #f0fdf4; /* 淡淡的綠色底 */
+            width: 100vw;
+            height: 100vh;
+            background-color: #f0fdf4;
             position: relative;
-            transform-origin: center center;
             overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
-            border-radius: 12px;
             display: flex;
             flex-direction: column;
         }
@@ -89,104 +86,104 @@
     <div id="game-wrapper">
         
         <!-- ================= START SCREEN ================= -->
-        <div id="start-screen" class="absolute inset-0 z-50 flex flex-col bg-gradient-to-br from-[#fffdf0] via-[#fff9c4] to-[#ffecb3] overflow-y-auto overflow-x-hidden p-6">
+        <div id="start-screen" class="absolute inset-0 z-50 flex flex-col bg-gradient-to-br from-[#fffdf0] via-[#fff9c4] to-[#ffecb3] overflow-y-auto overflow-x-hidden p-4 md:p-6">
             
             <!-- 主畫面內容 -->
-            <div class="flex-1 flex flex-col items-center justify-center w-full py-6 relative z-10">
+            <div class="flex-1 flex flex-col items-center justify-center w-full py-4 relative z-10 max-w-2xl mx-auto">
                 <!-- 全螢幕按鈕 -->
-                <button onclick="toggleFullScreen()" class="absolute top-0 right-0 p-3 bg-gray-100 hover:bg-gray-200 rounded-2xl shadow-md z-50 flex items-center justify-center btn border-2 border-gray-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-arrows-fullscreen text-gray-700" viewBox="0 0 16 16">
+                <button onclick="toggleFullScreen()" class="absolute top-2 right-2 p-2.5 bg-gray-100 hover:bg-gray-200 rounded-2xl shadow-md z-50 flex items-center justify-center btn border-2 border-gray-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrows-fullscreen text-gray-700" viewBox="0 0 16 16">
                       <path fill-rule="evenodd" d="M5.828 10.172a.5.5 0 0 0-.707 0l-4.096 4.096V11.5a.5.5 0 0 0-1 0v3.975a.5.5 0 0 0 .5.5H4.5a.5.5 0 0 0 0-1H1.732l4.096-4.096a.5.5 0 0 0 0-.707zm4.344 0a.5.5 0 0 1 .707 0l4.096 4.096V11.5a.5.5 0 1 1 1 0v3.975a.5.5 0 0 1-.5.5H11.5a.5.5 0 0 1 0-1h2.768l-4.096-4.096a.5.5 0 0 1 0-.707zm0-4.344a.5.5 0 0 0 .707 0l4.096-4.096V4.5a.5.5 0 1 0 1 0V.525a.5.5 0 0 0-.5-.5H11.5a.5.5 0 0 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 0 .707zm-4.344 0a.5.5 0 0 1-.707 0L1.732 1.732V4.5a.5.5 0 0 1-1 0V.525a.5.5 0 0 1 .5-.5H4.5a.5.5 0 0 1 0 1H1.732l4.096 4.096a.5.5 0 0 1 0 .707z"/>
                     </svg>
                 </button>
 
                 <!-- 標題區域 -->
-                <h1 class="text-5xl md:text-6xl font-black text-green-700 mb-3 drop-shadow-md text-center">💰 財源滾滾來</h1>
-                <p class="text-xl text-gray-600 mb-6 font-bold">請計算畫面上總共有多少錢？</p>
+                <h1 class="text-4xl md:text-6xl font-black text-green-700 mb-2 drop-shadow-md text-center">💰 財源滾滾來</h1>
+                <p class="text-lg md:text-xl text-gray-600 mb-4 font-bold text-center">請計算畫面上總共有多少錢？</p>
 
                 <!-- 秒數選擇區域 -->
-                <div class="mb-6 flex flex-col items-center bg-white/80 p-3 rounded-2xl shadow-inner border-2 border-gray-200">
-                    <span class="text-lg font-bold text-gray-700 mb-2">⏱️ 選擇答題時間</span>
-                    <div class="flex gap-3">
-                        <button onclick="setGameTime(10)" id="time-btn-10" class="time-btn px-5 py-1.5 rounded-full text-lg font-bold border-4 border-gray-300 text-gray-500 bg-white hover:bg-gray-50 btn">10秒</button>
-                        <button onclick="setGameTime(20)" id="time-btn-20" class="time-btn px-5 py-1.5 rounded-full text-lg font-bold border-4 border-gray-300 text-gray-500 bg-white hover:bg-gray-50 btn">20秒</button>
-                        <button onclick="setGameTime(30)" id="time-btn-30" class="time-btn px-5 py-1.5 rounded-full text-lg font-bold border-4 border-green-500 text-white bg-green-500 btn shadow-lg">30秒</button>
+                <div class="mb-4 flex flex-col items-center bg-white/80 p-2.5 rounded-2xl shadow-inner border-2 border-gray-200 w-full max-w-xs">
+                    <span class="text-base font-bold text-gray-700 mb-1.5">⏱️ 選擇答題時間</span>
+                    <div class="flex gap-2 w-full justify-center">
+                        <button onclick="setGameTime(10)" id="time-btn-10" class="time-btn px-4 py-1 rounded-full text-base font-bold border-2 border-gray-300 text-gray-500 bg-white hover:bg-gray-50 btn">10秒</button>
+                        <button onclick="setGameTime(20)" id="time-btn-20" class="time-btn px-4 py-1 rounded-full text-base font-bold border-2 border-gray-300 text-gray-500 bg-white hover:bg-gray-50 btn">20秒</button>
+                        <button onclick="setGameTime(30)" id="time-btn-30" class="time-btn px-4 py-1 rounded-full text-base font-bold border-2 border-green-500 text-white bg-green-500 btn shadow-md">30秒</button>
                     </div>
                 </div>
 
                 <!-- 關卡選擇按鈕 -->
-                <div class="flex flex-col gap-3 w-3/4 max-w-sm">
-                    <button onclick="startGame(1)" class="btn bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-2xl text-2xl shadow-[0_5px_0_#166534]">
+                <div class="flex flex-col gap-2.5 w-full max-w-xs">
+                    <button onclick="startGame(1)" class="btn bg-green-500 hover:bg-green-600 text-white font-bold py-2.5 px-4 rounded-xl text-xl shadow-[0_4px_0_#166534]">
                         第一關 (簡單)
                     </button>
-                    <button onclick="startGame(2)" class="btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-2xl text-2xl shadow-[0_5px_0_#1e3a8a]">
+                    <button onclick="startGame(2)" class="btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2.5 px-4 rounded-xl text-xl shadow-[0_4px_0_#1e3a8a]">
                         第二關 (中等)
                     </button>
-                    <button onclick="startGame(3)" class="btn bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-2xl text-2xl shadow-[0_5px_0_#7f1d1d]">
+                    <button onclick="startGame(3)" class="btn bg-red-500 hover:bg-red-600 text-white font-bold py-2.5 px-4 rounded-xl text-xl shadow-[0_4px_0_#7f1d1d]">
                         第三關 (困難)
                     </button>
                     
-                    <div class="w-full h-px bg-gray-300 my-1"></div>
+                    <div class="w-full h-px bg-gray-300 my-0.5"></div>
                     
-                    <button onclick="startGame(4)" class="btn bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-2xl text-2xl shadow-[0_5px_0_#4c1d95]">
+                    <button onclick="startGame(4)" class="btn bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 px-4 rounded-xl text-xl shadow-[0_4px_0_#4c1d95]">
                         <span>🧠 魔王關卡 (記憶)</span>
                     </button>
                 </div>
             </div>
 
             <!-- footer: 署名置底 -->
-            <div class="w-full pt-2 pb-2 flex justify-center shrink-0">
-                <div class="font-bold text-lg text-gray-500 tracking-wider">
+            <div class="w-full py-1 flex justify-center shrink-0">
+                <div class="font-bold text-base text-gray-500 tracking-wider">
                     小遊戲製作: 丁琬珮
                 </div>
             </div>
         </div>
 
-        <!-- ================= STREAMING_CHUNK:Rendering game screen and game over screen... ================= -->
+        <!-- ================= GAME SCREEN ================= -->
         <div id="game-screen" class="hidden flex-1 flex flex-col w-full h-full relative bg-green-50">
             
-            <div class="w-full bg-white shadow-md p-4 flex justify-between items-center z-20">
-                <button onclick="goHome()" class="btn bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-xl text-xl">
+            <div class="w-full bg-white shadow-md p-3 flex justify-between items-center z-20 shrink-0">
+                <button onclick="goHome()" class="btn bg-gray-500 hover:bg-gray-600 text-white font-bold py-1.5 px-4 rounded-xl text-lg">
                     ⬅️ 返回
                 </button>
-                <div class="text-4xl font-black text-gray-800 absolute left-1/2 transform -translate-x-1/2">
-                    第 <span id="round-display" class="text-green-600 text-5xl">1</span> / <span id="total-rounds-display">10</span> 題
+                <div class="text-2xl md:text-3xl font-black text-gray-800">
+                    第 <span id="round-display" class="text-green-600 text-3xl md:text-4xl">1</span> / <span id="total-rounds-display">10</span> 題
                 </div>
-                <div class="opacity-0 px-6 py-2">⬅️ 返回</div>
+                <div class="w-16"></div> <!-- 佔位平衡 -->
             </div>
 
-            <div class="w-full h-4 bg-gray-200">
+            <div class="w-full h-3 bg-gray-200 shrink-0">
                 <div id="timer-bar" class="h-full bg-red-500 w-full rounded-r-full shadow-inner"></div>
             </div>
 
-            <div id="money-area" class="flex-1 relative w-full border-b-4 border-green-800 bg-amber-50 overflow-hidden">
+            <div id="money-area" class="flex-1 relative w-full bg-amber-50 overflow-hidden">
                 <!-- Javascript 將在此處生成硬幣與紙鈔 -->
             </div>
 
-            <!-- 答案提示框 (位於下方偏中，不遮擋錢幣) -->
-            <div id="result-overlay" class="hidden absolute bottom-24 left-0 right-0 z-40 pointer-events-none flex flex-col items-center justify-center">
+            <!-- 答案提示框 -->
+            <div id="result-overlay" class="hidden absolute bottom-20 left-0 right-0 z-40 pointer-events-none flex flex-col items-center justify-center px-4">
                 <div id="result-message" class="text-center font-black flex flex-col items-center pointer-events-auto">
                     <!-- 答案顯示區 -->
                 </div>
             </div>
 
             <!-- 看正確解答 按鈕區塊 -->
-            <div class="w-full bg-green-800 p-6 flex items-center justify-center z-20 shadow-2xl relative h-[120px]">
-                <button onclick="showAnswer()" id="show-answer-btn" class="btn bg-yellow-400 hover:bg-yellow-300 text-green-900 font-black py-4 px-16 rounded-2xl text-5xl shadow-[0_6px_0_#b45309] transition-all">
+            <div class="w-full bg-green-800 p-4 flex items-center justify-center z-20 shadow-2xl shrink-0">
+                <button onclick="showAnswer()" id="show-answer-btn" class="btn bg-yellow-400 hover:bg-yellow-300 text-green-900 font-black py-3 px-10 rounded-2xl text-3xl md:text-4xl shadow-[0_5px_0_#b45309] transition-all">
                     看正確解答
                 </button>
             </div>
         </div>
 
         <!-- ================= GAME OVER SCREEN ================= -->
-        <div id="game-over-screen" class="hidden absolute inset-0 z-50 flex flex-col items-center justify-center bg-white bg-opacity-95">
-            <h2 class="text-6xl font-black text-blue-800 mb-6 drop-shadow-sm">🎉 挑戰完成！</h2>
-            <div class="text-4xl text-gray-700 mb-12 font-bold bg-gray-100 px-8 py-4 rounded-3xl shadow-inner border-2 border-gray-200">難度：<span id="final-level" class="text-red-500"></span></div>
-            <div class="flex gap-6">
-                <button onclick="goHome()" class="btn bg-gray-500 hover:bg-gray-600 text-white font-bold py-4 px-10 rounded-2xl text-3xl shadow-[0_6px_0_#4b5563]">
+        <div id="game-over-screen" class="hidden absolute inset-0 z-50 flex flex-col items-center justify-center bg-white bg-opacity-95 p-6">
+            <h2 class="text-5xl md:text-6xl font-black text-blue-800 mb-4 drop-shadow-sm text-center">🎉 挑戰完成！</h2>
+            <div class="text-2xl md:text-3xl text-gray-700 mb-8 font-bold bg-gray-100 px-6 py-3 rounded-3xl shadow-inner border-2 border-gray-200 text-center">難度：<span id="final-level" class="text-red-500"></span></div>
+            <div class="flex flex-col sm:flex-row gap-4 w-full max-w-xs sm:max-w-md justify-center">
+                <button onclick="goHome()" class="btn bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-8 rounded-2xl text-2xl shadow-[0_5px_0_#4b5563]">
                     回首頁
                 </button>
-                <button onclick="startGame(currentLevel)" class="btn bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-10 rounded-2xl text-3xl shadow-[0_6px_0_#166534]">
+                <button onclick="startGame(currentLevel)" class="btn bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-2xl text-2xl shadow-[0_5px_0_#166534]">
                     再玩一次
                 </button>
             </div>
@@ -194,30 +191,6 @@
     </div>
 
     <script>
-        // ===== 自動縮放畫面邏輯 (完美適配手機與電腦) =====
-        function resizeGame() {
-            const wrapper = document.getElementById('game-wrapper');
-            const windowWidth = window.innerWidth;
-            const windowHeight = window.innerHeight;
-            
-            const targetRatio = 1280 / 720;
-            const windowRatio = windowWidth / windowHeight;
-            
-            let scale;
-            if (windowRatio < targetRatio) {
-                // 手機直式或較窄螢幕：以畫面寬度為基準貼齊
-                scale = windowWidth / 1280;
-            } else {
-                // 電腦或較寬螢幕：以畫面高度為基準貼齊
-                scale = windowHeight / 720;
-            }
-            
-            wrapper.style.transform = `scale(${scale})`;
-        }
-
-        window.addEventListener('resize', resizeGame);
-        resizeGame();
-
         function toggleFullScreen() {
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen().catch(err => {
@@ -241,13 +214,13 @@
         };
 
         const ITEMS_DEF = [
-            { val: 1, type: 'coin', w: 100, h: 100, svg: SVGS.coin1 },
-            { val: 5, type: 'coin', w: 110, h: 110, svg: SVGS.coin5 },
-            { val: 10, type: 'coin', w: 110, h: 110, svg: SVGS.coin10 },
-            { val: 50, type: 'coin', w: 125, h: 125, svg: SVGS.coin50 },
-            { val: 100, type: 'bill', w: 310, h: 145, svg: SVGS.bill100 },
-            { val: 500, type: 'bill', w: 310, h: 145, svg: SVGS.bill500 },
-            { val: 1000, type: 'bill', w: 310, h: 145, svg: SVGS.bill1000 }
+            { val: 1, type: 'coin', w: 75, h: 75, svg: SVGS.coin1 },
+            { val: 5, type: 'coin', w: 82, h: 82, svg: SVGS.coin5 },
+            { val: 10, type: 'coin', w: 82, h: 82, svg: SVGS.coin10 },
+            { val: 50, type: 'coin', w: 95, h: 95, svg: SVGS.coin50 },
+            { val: 100, type: 'bill', w: 220, h: 100, svg: SVGS.bill100 },
+            { val: 500, type: 'bill', w: 220, h: 100, svg: SVGS.bill500 },
+            { val: 1000, type: 'bill', w: 220, h: 100, svg: SVGS.bill1000 }
         ];
 
         const TOTAL_ROUNDS = 10;
@@ -281,12 +254,12 @@
         function setGameTime(seconds) {
             selectedTime = seconds;
             document.querySelectorAll('.time-btn').forEach(btn => {
-                btn.classList.remove('border-green-500', 'text-white', 'bg-green-500', 'shadow-lg');
+                btn.classList.remove('border-green-500', 'text-white', 'bg-green-500', 'shadow-md');
                 btn.classList.add('border-gray-300', 'text-gray-500', 'bg-white');
             });
             const activeBtn = document.getElementById(`time-btn-${seconds}`);
             activeBtn.classList.remove('border-gray-300', 'text-gray-500', 'bg-white');
-            activeBtn.classList.add('border-green-500', 'text-white', 'bg-green-500', 'shadow-lg');
+            activeBtn.classList.add('border-green-500', 'text-white', 'bg-green-500', 'shadow-md');
         }
 
         function clearAllTimers() {
@@ -355,7 +328,7 @@
                 svgChild.classList.add('animate-pop-in');
                 
                 await new Promise(resolve => { 
-                    const t = setTimeout(resolve, 2000); 
+                    const t = setTimeout(resolve, 1500); 
                     memoryTimeouts.push(t);
                 });
                 if (!isSequencePlaying) return;
@@ -364,7 +337,7 @@
                 svgChild.classList.add('fade-out');
                 
                 await new Promise(resolve => { 
-                    const t = setTimeout(resolve, 800); 
+                    const t = setTimeout(resolve, 600); 
                     memoryTimeouts.push(t);
                 });
             }
@@ -406,17 +379,16 @@
 
         function generateMoney() {
             currentTotal = 0;
-            const areaWidth = 1280;
-            const areaHeight = 440;
-            const paddingX = 40; 
-            const paddingY = 30; 
+            const areaWidth = moneyArea.clientWidth || window.innerWidth;
+            const areaHeight = moneyArea.clientHeight || (window.innerHeight - 200);
+            const paddingX = 20; 
+            const paddingY = 20; 
             
             let targetMaxSum = 0;
             let availableItems = [];
             let maxItems = 0; 
             let minItems = 0; 
 
-            // 各關卡數量與金額循序漸進邏輯 (1-10題數量由少至多，金額從小到大)
             if (currentLevel === 1) { 
                 if (currentRound <= 2) { 
                     targetMaxSum = 30; availableItems = [1, 5, 10]; minItems = 2; maxItems = 3;
@@ -460,7 +432,7 @@
             }
 
             let generatedItems = [];
-            const MAX_TRIES_PER_ITEM = 400; 
+            const MAX_TRIES_PER_ITEM = 300; 
             let keepGenerating = true;
             const targetItemsCount = Math.floor(Math.random() * (maxItems - minItems + 1)) + minItems;
 
@@ -489,7 +461,7 @@
                     const top = paddingY + Math.random() * Math.max(1, (areaHeight - h - paddingY * 2));
 
                     let overlap = false;
-                    const buffer = 20; // 絕對不重疊安全間距
+                    const buffer = 15; 
                     for (let existing of generatedItems) {
                         if (left < existing.left + existing.w + buffer &&
                             left + w + buffer > existing.left &&
@@ -530,11 +502,11 @@
                     svgChild.style.opacity = '0'; 
                 } else {
                     svgChild.classList.add('animate-pop-in');
-                    svgChild.style.animationDelay = `${Math.random() * 0.4}s`;
+                    svgChild.style.animationDelay = `${Math.random() * 0.3}s`;
                 }
                 
                 if (data.type === 'bill') {
-                    const rot = (Math.random() * 16) - 8; 
+                    const rot = (Math.random() * 12) - 6; 
                     svgChild.style.transform = `rotate(${rot}deg)`;
                 }
 
@@ -549,7 +521,6 @@
             clearAllTimers();
             showAnswerBtn.disabled = true;
 
-            // 魔王關卡驗證：把消失的錢幣重新顯示出來
             if (LEVELS[currentLevel].isMemoryMode) {
                 const items = moneyArea.querySelectorAll('.money-item-container');
                 items.forEach(container => {
@@ -566,9 +537,9 @@
             resultMessage.classList.add('animate-pop-in');
 
             if (isTimeUp) {
-                resultMessage.innerHTML = '<div class="text-3xl text-yellow-600 font-black drop-shadow-md">⏰ 時間到！</div><div class="text-5xl text-white font-black bg-green-800/95 px-10 py-3 rounded-2xl border-4 border-yellow-400 shadow-2xl mt-1">正確答案: ' + currentTotal + ' 元</div>';
+                resultMessage.innerHTML = '<div class="text-2xl md:text-3xl text-yellow-600 font-black drop-shadow-md">⏰ 時間到！</div><div class="text-3xl md:text-5xl text-white font-black bg-green-800/95 px-6 md:px-10 py-2.5 rounded-2xl border-4 border-yellow-400 shadow-2xl mt-1">正確答案: ' + currentTotal + ' 元</div>';
             } else {
-                resultMessage.innerHTML = '<div class="text-3xl text-green-700 font-black drop-shadow-md">💡 正確解答</div><div class="text-5xl text-white font-black bg-green-800/95 px-10 py-3 rounded-2xl border-4 border-green-400 shadow-2xl mt-1">正確答案: ' + currentTotal + ' 元</div>';
+                resultMessage.innerHTML = '<div class="text-2xl md:text-3xl text-green-700 font-black drop-shadow-md">💡 正確解答</div><div class="text-3xl md:text-5xl text-white font-black bg-green-800/95 px-6 md:px-10 py-2.5 rounded-2xl border-4 border-green-400 shadow-2xl mt-1">正確答案: ' + currentTotal + ' 元</div>';
             }
 
             answerTimeout = setTimeout(() => {
