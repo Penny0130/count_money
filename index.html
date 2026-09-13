@@ -10,7 +10,7 @@
         
         body, html {
             font-family: 'Noto Sans TC', sans-serif;
-            background-color: #222; /* 深色背景，讓遊戲畫面更突出 */
+            background-color: #f0fdf4; /* 改為與遊戲一致的淺色背景，解決手機版黑邊問題 */
             margin: 0;
             padding: 0;
             width: 100vw;
@@ -23,7 +23,7 @@
             -webkit-user-select: none;
         }
 
-        /* 遊戲畫布：固定 1280x720 (16:9)，由 JS 自動縮放 */
+        /* 遊戲畫布：固定 1280x720 (16:9)，由 JS 自動縮放適配電腦與手機 */
         #game-wrapper {
             width: 1280px;
             height: 720px;
@@ -31,7 +31,7 @@
             position: relative;
             transform-origin: center center;
             overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
             border-radius: 12px;
             display: flex;
             flex-direction: column;
@@ -194,7 +194,7 @@
     </div>
 
     <script>
-        // ===== 自動縮放畫面邏輯 (支援手機與電腦完美 16:9 排版) =====
+        // ===== 自動縮放畫面邏輯 (完美適配手機與電腦) =====
         function resizeGame() {
             const wrapper = document.getElementById('game-wrapper');
             const windowWidth = window.innerWidth;
@@ -205,9 +205,11 @@
             
             let scale;
             if (windowRatio < targetRatio) {
-                scale = (windowWidth * 0.98) / 1280;
+                // 手機直式或較窄螢幕：以畫面寬度為基準貼齊
+                scale = windowWidth / 1280;
             } else {
-                scale = (windowHeight * 0.98) / 720;
+                // 電腦或較寬螢幕：以畫面高度為基準貼齊
+                scale = windowHeight / 720;
             }
             
             wrapper.style.transform = `scale(${scale})`;
@@ -260,12 +262,12 @@
         let currentRound = 1;
         let currentTotal = 0;
         let timerInterval;
-        let memoryTimeout;
+        let memoryTimeouts = [];
+        let answerTimeout;
+        let roundStartTimeout;
         let timeLeft = 0;
         let selectedTime = 30;
         let isSequencePlaying = false; 
-        let answerTimeout;
-        let roundStartTimeout;
 
         const startScreen = document.getElementById('start-screen');
         const gameScreen = document.getElementById('game-screen');
@@ -289,9 +291,10 @@
 
         function clearAllTimers() {
             clearInterval(timerInterval);
-            clearTimeout(memoryTimeout);
             clearTimeout(answerTimeout);
             clearTimeout(roundStartTimeout);
+            memoryTimeouts.forEach(t => clearTimeout(t));
+            memoryTimeouts = [];
         }
 
         function startGame(level) {
@@ -351,13 +354,19 @@
                 svgChild.classList.remove('fade-out');
                 svgChild.classList.add('animate-pop-in');
                 
-                await new Promise(resolve => { memoryTimeout = setTimeout(resolve, 2000); });
+                await new Promise(resolve => { 
+                    const t = setTimeout(resolve, 2000); 
+                    memoryTimeouts.push(t);
+                });
                 if (!isSequencePlaying) return;
                 
                 svgChild.classList.remove('animate-pop-in');
                 svgChild.classList.add('fade-out');
                 
-                await new Promise(resolve => { memoryTimeout = setTimeout(resolve, 800); });
+                await new Promise(resolve => { 
+                    const t = setTimeout(resolve, 800); 
+                    memoryTimeouts.push(t);
+                });
             }
             
             if (isSequencePlaying) {
@@ -397,25 +406,24 @@
 
         function generateMoney() {
             currentTotal = 0;
-            const areaRect = moneyArea.getBoundingClientRect();
-            const areaWidth = Math.max(areaRect.width, 800);
-            const areaHeight = Math.max(areaRect.height, 400);
-            const paddingX = 25; 
-            const paddingY = 25; 
+            const areaWidth = 1280;
+            const areaHeight = 440;
+            const paddingX = 40; 
+            const paddingY = 30; 
             
             let targetMaxSum = 0;
             let availableItems = [];
             let maxItems = 0; 
             let minItems = 0; 
 
-            // 各關卡循序漸進邏輯
+            // 各關卡數量與金額循序漸進邏輯 (1-10題數量由少至多，金額從小到大)
             if (currentLevel === 1) { 
                 if (currentRound <= 2) { 
-                    targetMaxSum = 50; availableItems = [1, 5, 10]; minItems = 2; maxItems = 3;
+                    targetMaxSum = 30; availableItems = [1, 5, 10]; minItems = 2; maxItems = 3;
                 } else if (currentRound <= 4) { 
-                    targetMaxSum = 100; availableItems = [1, 5, 10]; minItems = 3; maxItems = 4;
+                    targetMaxSum = 70; availableItems = [1, 5, 10]; minItems = 3; maxItems = 4;
                 } else if (currentRound <= 6) { 
-                    targetMaxSum = 150; availableItems = [1, 5, 10, 50]; minItems = 4; maxItems = 5;
+                    targetMaxSum = 120; availableItems = [1, 5, 10, 50]; minItems = 4; maxItems = 5;
                 } else if (currentRound <= 8) { 
                     targetMaxSum = 200; availableItems = [5, 10, 50]; minItems = 5; maxItems = 6;
                 } else { 
@@ -423,17 +431,17 @@
                 }
             } else if (currentLevel === 2) { 
                 if (currentRound <= 2) { 
-                    targetMaxSum = 150; availableItems = [1, 5, 10, 50]; minItems = 3; maxItems = 4;
+                    targetMaxSum = 150; availableItems = [1, 5, 10, 50, 100]; minItems = 2; maxItems = 3;
                 } else if (currentRound <= 5) { 
                     targetMaxSum = 600; availableItems = [1, 5, 10, 50, 100]; minItems = 4; maxItems = 6;
                 } else if (currentRound <= 8) { 
                     targetMaxSum = 1500; availableItems = [1, 5, 10, 50, 100, 500]; minItems = 6; maxItems = 7;
                 } else { 
-                    targetMaxSum = 2500; availableItems = [1, 5, 10, 50, 100, 500]; minItems = 7; maxItems = 8;
+                    targetMaxSum = 2500; availableItems = [1, 5, 10, 50, 100, 500]; minItems = 7; maxItems = 9;
                 }
             } else if (currentLevel === 3) { 
                 if (currentRound <= 2) { 
-                    targetMaxSum = 600; availableItems = [1, 5, 10, 50, 100, 500]; minItems = 3; maxItems = 5;
+                    targetMaxSum = 600; availableItems = [1, 5, 10, 50, 100, 500]; minItems = 3; maxItems = 4;
                 } else if (currentRound <= 5) { 
                     targetMaxSum = 2500; availableItems = [1, 5, 10, 50, 100, 500, 1000]; minItems = 5; maxItems = 6;
                 } else if (currentRound <= 8) { 
@@ -443,16 +451,16 @@
                 }
             } else if (currentLevel === 4) { 
                 if (currentRound <= 2) { 
-                    targetMaxSum = 100; availableItems = [1, 5, 10, 50]; minItems = 3; maxItems = 4;
+                    targetMaxSum = 100; availableItems = [1, 5, 10, 50]; minItems = 2; maxItems = 3;
                 } else if (currentRound <= 6) { 
-                    targetMaxSum = 500; availableItems = [1, 5, 10, 50, 100]; minItems = 4; maxItems = 6;
+                    targetMaxSum = 500; availableItems = [1, 5, 10, 50, 100]; minItems = 4; maxItems = 5;
                 } else { 
-                    targetMaxSum = 2500; availableItems = [1, 5, 10, 50, 100, 500, 1000]; minItems = 5; maxItems = 7;
+                    targetMaxSum = 2500; availableItems = [1, 5, 10, 50, 100, 500, 1000]; minItems = 6; maxItems = 7;
                 }
             }
 
             let generatedItems = [];
-            const MAX_TRIES_PER_ITEM = 300; 
+            const MAX_TRIES_PER_ITEM = 400; 
             let keepGenerating = true;
             const targetItemsCount = Math.floor(Math.random() * (maxItems - minItems + 1)) + minItems;
 
@@ -481,7 +489,7 @@
                     const top = paddingY + Math.random() * Math.max(1, (areaHeight - h - paddingY * 2));
 
                     let overlap = false;
-                    const buffer = 15; // 嚴格不重疊間距
+                    const buffer = 20; // 絕對不重疊安全間距
                     for (let existing of generatedItems) {
                         if (left < existing.left + existing.w + buffer &&
                             left + w + buffer > existing.left &&
@@ -558,7 +566,7 @@
             resultMessage.classList.add('animate-pop-in');
 
             if (isTimeUp) {
-                resultMessage.innerHTML = '<div class="text-3xl text-yellow-500 font-black drop-shadow-md">⏰ 時間到！</div><div class="text-5xl text-white font-black bg-green-800/95 px-10 py-3 rounded-2xl border-4 border-yellow-400 shadow-2xl mt-1">正確答案: ' + currentTotal + ' 元</div>';
+                resultMessage.innerHTML = '<div class="text-3xl text-yellow-600 font-black drop-shadow-md">⏰ 時間到！</div><div class="text-5xl text-white font-black bg-green-800/95 px-10 py-3 rounded-2xl border-4 border-yellow-400 shadow-2xl mt-1">正確答案: ' + currentTotal + ' 元</div>';
             } else {
                 resultMessage.innerHTML = '<div class="text-3xl text-green-700 font-black drop-shadow-md">💡 正確解答</div><div class="text-5xl text-white font-black bg-green-800/95 px-10 py-3 rounded-2xl border-4 border-green-400 shadow-2xl mt-1">正確答案: ' + currentTotal + ' 元</div>';
             }
