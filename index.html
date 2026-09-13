@@ -105,8 +105,8 @@
                 <div class="mb-4 flex flex-col items-center bg-white/80 p-2.5 rounded-2xl shadow-inner border-2 border-gray-200 w-full max-w-xs">
                     <span class="text-base font-bold text-gray-700 mb-1.5">⏱️ 選擇答題時間</span>
                     <div class="flex gap-2 w-full justify-center">
-                        <button onclick="setGameTime(10)" id="time-btn-10" class="time-btn px-4 py-1 rounded-full text-base font-bold border-2 border-gray-300 text-gray-500 bg-white hover:bg-gray-50 btn">10秒</button>
-                        <button onclick="setGameTime(20)" id="time-btn-20" class="time-btn px-4 py-1 rounded-full text-base font-bold border-2 border-gray-300 text-gray-500 bg-white hover:bg-gray-50 btn">20秒</button>
+                        <button onclick="setGameTime(10)" id="time-btn-10" class="time-btn px-4 py-1 rounded-full text-base font-bold border-2 border-gray-300 text-gray-800 bg-white hover:bg-gray-50 btn">10秒</button>
+                        <button onclick="setGameTime(20)" id="time-btn-20" class="time-btn px-4 py-1 rounded-full text-base font-bold border-2 border-gray-300 text-gray-800 bg-white hover:bg-gray-50 btn">20秒</button>
                         <button onclick="setGameTime(30)" id="time-btn-30" class="time-btn px-4 py-1 rounded-full text-base font-bold border-2 border-green-500 text-white bg-green-500 btn shadow-md">30秒</button>
                     </div>
                 </div>
@@ -149,7 +149,7 @@
                 <div class="text-2xl md:text-3xl font-black text-gray-800">
                     第 <span id="round-display" class="text-green-600 text-3xl md:text-4xl">1</span> / <span id="total-rounds-display">10</span> 題
                 </div>
-                <div class="w-16"></div> <!-- 佔位平衡 -->
+                <div class="w-16"></div>
             </div>
 
             <div class="w-full h-3 bg-gray-200 shrink-0">
@@ -255,10 +255,10 @@
             selectedTime = seconds;
             document.querySelectorAll('.time-btn').forEach(btn => {
                 btn.classList.remove('border-green-500', 'text-white', 'bg-green-500', 'shadow-md');
-                btn.classList.add('border-gray-300', 'text-gray-500', 'bg-white');
+                btn.classList.add('border-gray-300', 'text-gray-800', 'bg-white');
             });
             const activeBtn = document.getElementById(`time-btn-${seconds}`);
-            activeBtn.classList.remove('border-gray-300', 'text-gray-500', 'bg-white');
+            activeBtn.classList.remove('border-gray-300', 'text-gray-800', 'bg-white');
             activeBtn.classList.add('border-green-500', 'text-white', 'bg-green-500', 'shadow-md');
         }
 
@@ -413,7 +413,7 @@
                 }
             } else if (currentLevel === 3) { 
                 if (currentRound <= 2) { 
-                    targetMaxSum = 600; availableItems = [1, 5, 10, 50, 100, 500]; minItems = 3; maxItems = 4;
+                    targetMaxSum = 600; availableItems = [1, 5, 10, 50, 100, 500, 1000]; minItems = 3; maxItems = 4;
                 } else if (currentRound <= 5) { 
                     targetMaxSum = 2500; availableItems = [1, 5, 10, 50, 100, 500, 1000]; minItems = 5; maxItems = 6;
                 } else if (currentRound <= 8) { 
