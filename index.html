@@ -9,12 +9,12 @@
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
         
         body, html {
-            font-family: 'Noto Sans TC', sans-serif;
-            background-color: #f0fdf4;
             margin: 0;
             padding: 0;
             width: 100vw;
             height: 100vh;
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #ffffff; /* 更改為純白底色以抵抗反光 */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -23,61 +23,61 @@
             -webkit-user-select: none;
         }
 
-        /* 手機與電腦完全滿版響應式容器 */
         #game-wrapper {
-            width: 100vw;
-            height: 100vh;
-            background-color: #f0fdf4;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff; 
             position: relative;
             overflow: hidden;
             display: flex;
             flex-direction: column;
         }
 
+        /* 互動按鈕的實體下壓效果 */
         .btn {
-            transition: all 0.2s ease-in-out;
+            transition: all 0.1s ease-in-out;
         }
-        
         .btn:active {
-            transform: scale(0.95);
+            transform: translate(4px, 4px);
+            box-shadow: 0px 0px 0px #000 !important;
         }
-        
         .btn:disabled {
-            transform: scale(1);
+            transform: none;
             filter: grayscale(100%);
             opacity: 0.7;
             cursor: not-allowed;
-            box-shadow: none;
+            box-shadow: none !important;
         }
 
+        /* 高對比硬邊陰影取代柔和陰影 */
         .money-item {
             position: absolute;
-            filter: drop-shadow(3px 5px 4px rgba(0,0,0,0.4));
+            filter: drop-shadow(4px 4px 0px rgba(0,0,0,1));
             transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
         }
-
         .bill-svg {
-            filter: drop-shadow(4px 6px 5px rgba(0,0,0,0.3));
-            border-radius: 4px;
+            /* 紙鈔不額外加 drop-shadow，統一由 money-item 控制 */
         }
-
+        
         @keyframes popIn {
             0% { transform: scale(0); opacity: 0; }
             80% { transform: scale(1.1); opacity: 1; }
             100% { transform: scale(1); opacity: 1; }
         }
-
         .animate-pop-in {
             animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
-        
         .fade-out {
             opacity: 0 !important;
             transform: scale(0.5) !important;
         }
-
         #timer-bar {
             transition: width 0.1s linear;
+        }
+        
+        /* 確保字體特粗 */
+        .heavy-text {
+            font-weight: 900;
         }
     </style>
 </head>
@@ -85,111 +85,122 @@
 
     <div id="game-wrapper">
         
-        <!-- ================= START SCREEN ================= -->
-        <div id="start-screen" class="absolute inset-0 z-50 flex flex-col bg-gradient-to-br from-[#fffdf0] via-[#fff9c4] to-[#ffecb3] overflow-y-auto overflow-x-hidden p-4 md:p-6">
-            
-            <!-- 主畫面內容 -->
-            <div class="flex-1 flex flex-col items-center justify-center w-full py-4 relative z-10 max-w-2xl mx-auto">
-                <!-- 全螢幕按鈕 -->
-                <button onclick="toggleFullScreen()" class="absolute top-2 right-2 p-2.5 bg-gray-100 hover:bg-gray-200 rounded-2xl shadow-md z-50 flex items-center justify-center btn border-2 border-gray-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrows-fullscreen text-gray-700" viewBox="0 0 16 16">
+        <!-- ================= STREAMING_CHUNK:Start Screen High Contrast UI ================= -->
+        <div id="start-screen" class="absolute inset-0 z-50 flex flex-col bg-[#F8F9FA] overflow-y-auto overflow-x-hidden p-6">
+            <div class="flex-1 flex flex-col items-center justify-center w-full py-4 relative z-10">
+                
+                <!-- 全螢幕按鈕 (高對比) -->
+                <button onclick="toggleFullScreen()" class="absolute top-2 right-2 p-3 bg-white hover:bg-gray-200 rounded-xl z-50 flex items-center justify-center btn border-4 border-black shadow-[4px_4px_0_#000]">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="#000" class="bi bi-arrows-fullscreen" viewBox="0 0 16 16">
                       <path fill-rule="evenodd" d="M5.828 10.172a.5.5 0 0 0-.707 0l-4.096 4.096V11.5a.5.5 0 0 0-1 0v3.975a.5.5 0 0 0 .5.5H4.5a.5.5 0 0 0 0-1H1.732l4.096-4.096a.5.5 0 0 0 0-.707zm4.344 0a.5.5 0 0 1 .707 0l4.096 4.096V11.5a.5.5 0 1 1 1 0v3.975a.5.5 0 0 1-.5.5H11.5a.5.5 0 0 1 0-1h2.768l-4.096-4.096a.5.5 0 0 1 0-.707zm0-4.344a.5.5 0 0 0 .707 0l4.096-4.096V4.5a.5.5 0 1 0 1 0V.525a.5.5 0 0 0-.5-.5H11.5a.5.5 0 0 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 0 .707zm-4.344 0a.5.5 0 0 1-.707 0L1.732 1.732V4.5a.5.5 0 0 1-1 0V.525a.5.5 0 0 1 .5-.5H4.5a.5.5 0 0 1 0 1H1.732l4.096 4.096a.5.5 0 0 1 0 .707z"/>
                     </svg>
                 </button>
 
-                <!-- 標題區域 -->
-                <h1 class="text-4xl md:text-6xl font-black text-green-700 mb-2 drop-shadow-md text-center">💰 財源滾滾來</h1>
-                <p class="text-lg md:text-xl text-gray-600 mb-4 font-bold text-center">請計算畫面上總共有多少錢？</p>
+                <!-- 標題 -->
+                <h1 class="text-5xl md:text-6xl heavy-text text-black mb-3 text-center border-b-4 border-black pb-2 inline-block">💰 財源滾滾來</h1>
+                <p class="text-xl md:text-2xl text-black mb-6 heavy-text text-center bg-[#FDE047] px-4 py-1 border-4 border-black shadow-[4px_4px_0_#000] -rotate-1">請計算畫面上總共有多少錢？</p>
 
                 <!-- 秒數選擇區域 -->
-                <div class="mb-4 flex flex-col items-center bg-white/80 p-2.5 rounded-2xl shadow-inner border-2 border-gray-200 w-full max-w-xs">
-                    <span class="text-base font-bold text-gray-700 mb-1.5">⏱️ 選擇答題時間</span>
-                    <div class="flex gap-2 w-full justify-center">
-                        <button onclick="setGameTime(10)" id="time-btn-10" class="time-btn px-4 py-1 rounded-full text-base font-bold border-2 border-gray-300 text-gray-800 bg-white hover:bg-gray-50 btn">10秒</button>
-                        <button onclick="setGameTime(20)" id="time-btn-20" class="time-btn px-4 py-1 rounded-full text-base font-bold border-2 border-gray-300 text-gray-800 bg-white hover:bg-gray-50 btn">20秒</button>
-                        <button onclick="setGameTime(30)" id="time-btn-30" class="time-btn px-4 py-1 rounded-full text-base font-bold border-2 border-green-500 text-white bg-green-500 btn shadow-md">30秒</button>
+                <div class="mb-6 flex flex-col items-center bg-white p-4 rounded-xl border-4 border-black shadow-[6px_6px_0_#000] w-full max-w-[320px] md:max-w-sm">
+                    <span class="text-lg md:text-xl heavy-text text-black mb-3">⏱️ 選擇答題時間</span>
+                    <div class="flex gap-3 w-full justify-center">
+                        <button onclick="setGameTime(10)" id="time-btn-10" class="time-btn flex-1 py-2 rounded-lg text-lg font-black border-4 border-black text-black bg-white btn shadow-[4px_4px_0_#000]">10秒</button>
+                        <button onclick="setGameTime(20)" id="time-btn-20" class="time-btn flex-1 py-2 rounded-lg text-lg font-black border-4 border-black text-black bg-white btn shadow-[4px_4px_0_#000]">20秒</button>
+                        <button onclick="setGameTime(30)" id="time-btn-30" class="time-btn flex-1 py-2 rounded-lg text-lg font-black border-4 border-black text-white bg-black btn shadow-[4px_4px_0_#000]">30秒</button>
                     </div>
                 </div>
 
                 <!-- 關卡選擇按鈕 -->
-                <div class="flex flex-col gap-2.5 w-full max-w-xs">
-                    <button onclick="startGame(1)" class="btn bg-green-500 hover:bg-green-600 text-white font-bold py-2.5 px-4 rounded-xl text-xl shadow-[0_4px_0_#166534]">
+                <div class="flex flex-col gap-4 w-full max-w-[300px] md:max-w-sm pb-8">
+                    <button onclick="startGame(1)" class="btn bg-[#4ADE80] text-black heavy-text py-3 px-6 rounded-xl text-xl md:text-2xl border-4 border-black shadow-[6px_6px_0_#000]">
                         第一關 (簡單)
                     </button>
-                    <button onclick="startGame(2)" class="btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2.5 px-4 rounded-xl text-xl shadow-[0_4px_0_#1e3a8a]">
+                    <button onclick="startGame(2)" class="btn bg-[#60A5FA] text-black heavy-text py-3 px-6 rounded-xl text-xl md:text-2xl border-4 border-black shadow-[6px_6px_0_#000]">
                         第二關 (中等)
                     </button>
-                    <button onclick="startGame(3)" class="btn bg-red-500 hover:bg-red-600 text-white font-bold py-2.5 px-4 rounded-xl text-xl shadow-[0_4px_0_#7f1d1d]">
+                    <button onclick="startGame(3)" class="btn bg-[#F87171] text-black heavy-text py-3 px-6 rounded-xl text-xl md:text-2xl border-4 border-black shadow-[6px_6px_0_#000]">
                         第三關 (困難)
                     </button>
                     
-                    <div class="w-full h-px bg-gray-300 my-0.5"></div>
+                    <div class="w-full h-2 bg-black my-2 rounded-full"></div>
                     
-                    <button onclick="startGame(4)" class="btn bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 px-4 rounded-xl text-xl shadow-[0_4px_0_#4c1d95]">
-                        <span>🧠 魔王關卡 (記憶)</span>
+                    <button onclick="startGame(4)" class="btn bg-[#C084FC] text-black heavy-text py-3 px-6 rounded-xl text-2xl border-4 border-black shadow-[6px_6px_0_#000]">
+                        🧠 魔王關卡 (記憶)
+                    </button>
+                    
+                    <button onclick="startGame(5)" class="btn bg-[#2DD4BF] text-black heavy-text py-3 px-6 rounded-xl text-2xl border-4 border-black shadow-[6px_6px_0_#000]">
+                        🛒 第五關 (老闆找錢)
                     </button>
                 </div>
             </div>
 
-            <!-- footer: 署名置底 -->
-            <div class="w-full py-1 flex justify-center shrink-0">
-                <div class="font-bold text-base text-gray-500 tracking-wider">
+            <!-- 署名置底 -->
+            <div class="w-full pb-4 flex justify-center shrink-0 z-10">
+                <div class="heavy-text text-base md:text-lg text-black bg-white px-4 py-1 border-4 border-black shadow-[4px_4px_0_#000]">
                     小遊戲製作: 丁琬珮
                 </div>
             </div>
         </div>
 
-        <!-- ================= GAME SCREEN ================= -->
-        <div id="game-screen" class="hidden flex-1 flex flex-col w-full h-full relative bg-green-50">
+        <!-- ================= STREAMING_CHUNK:Game Screen High Contrast UI ================= -->
+        <div id="game-screen" class="hidden flex-1 flex flex-col w-full h-full relative bg-white">
             
-            <div class="w-full bg-white shadow-md p-3 flex justify-between items-center z-20 shrink-0">
-                <button onclick="goHome()" class="btn bg-gray-500 hover:bg-gray-600 text-white font-bold py-1.5 px-4 rounded-xl text-lg">
+            <div class="w-full bg-white border-b-4 border-black p-3 md:p-4 flex justify-between items-center z-20 shrink-0">
+                <button onclick="goHome()" class="btn bg-gray-200 text-black heavy-text py-2 px-4 rounded-xl text-base md:text-xl shrink-0 border-4 border-black shadow-[4px_4px_0_#000]">
                     ⬅️ 返回
                 </button>
-                <div class="text-2xl md:text-3xl font-black text-gray-800">
-                    第 <span id="round-display" class="text-green-600 text-3xl md:text-4xl">1</span> / <span id="total-rounds-display">10</span> 題
+                <div class="text-2xl md:text-4xl heavy-text text-black flex-1 text-center">
+                    第 <span id="round-display" class="text-[#EF4444] text-4xl md:text-5xl border-b-4 border-black px-2">1</span> / <span id="total-rounds-display">10</span> 題
                 </div>
-                <div class="w-16"></div>
+                <div class="opacity-0 px-4 py-2 shrink-0 w-[80px] md:w-[120px]"></div>
             </div>
 
-            <div class="w-full h-3 bg-gray-200 shrink-0">
-                <div id="timer-bar" class="h-full bg-red-500 w-full rounded-r-full shadow-inner"></div>
+            <div class="w-full h-6 bg-gray-200 border-b-4 border-black shrink-0 relative overflow-hidden">
+                <div id="timer-bar" class="h-full bg-black w-full border-r-4 border-black"></div>
             </div>
 
-            <div id="money-area" class="flex-1 relative w-full bg-amber-50 overflow-hidden">
-                <!-- Javascript 將在此處生成硬幣與紙鈔 -->
+            <!-- 第五關提示框 -->
+            <div id="shopping-prompt" class="hidden w-full bg-[#60A5FA] p-3 flex justify-center items-center z-10 shrink-0 border-b-4 border-black">
+                <span class="text-xl md:text-3xl heavy-text text-black bg-white px-6 py-2 border-4 border-black shadow-[4px_4px_0_#000] rotate-1">今天出門總共花了 <span id="shopping-cost" class="text-[#EF4444] text-4xl mx-2 underline">0</span> 元</span>
             </div>
 
-            <!-- 答案提示框 -->
-            <div id="result-overlay" class="hidden absolute bottom-20 left-0 right-0 z-40 pointer-events-none flex flex-col items-center justify-center px-4">
-                <div id="result-message" class="text-center font-black flex flex-col items-center pointer-events-auto">
+            <div id="money-area" class="flex-1 relative w-full bg-[#F3F4F6] overflow-hidden">
+                <!-- Javascript 生成的錢幣放這裡 -->
+            </div>
+
+            <!-- 答案提示框 (高對比) -->
+            <div id="result-overlay" class="hidden absolute bottom-28 md:bottom-32 left-0 right-0 z-40 pointer-events-none flex flex-col items-center justify-center">
+                <div id="result-message" class="text-center heavy-text flex flex-col items-center pointer-events-auto">
                     <!-- 答案顯示區 -->
                 </div>
             </div>
 
-            <!-- 看正確解答 按鈕區塊 -->
-            <div class="w-full bg-green-800 p-4 flex items-center justify-center z-20 shadow-2xl shrink-0">
-                <button onclick="showAnswer()" id="show-answer-btn" class="btn bg-yellow-400 hover:bg-yellow-300 text-green-900 font-black py-3 px-10 rounded-2xl text-3xl md:text-4xl shadow-[0_5px_0_#b45309] transition-all">
+            <div class="w-full bg-[#E5E7EB] border-t-4 border-black p-4 flex flex-col md:flex-row items-center justify-center gap-4 z-20 relative h-auto md:h-[120px] shrink-0">
+                <button onclick="showAnswer()" id="show-answer-btn" class="btn bg-[#FDE047] text-black heavy-text py-4 px-12 md:px-16 rounded-xl text-3xl md:text-5xl border-4 border-black shadow-[6px_6px_0_#000] transition-all w-full md:w-auto">
                     看正確解答
+                </button>
+                <button onclick="togglePause()" id="pause-btn" class="btn bg-[#FB923C] text-black heavy-text py-3 px-6 md:py-4 md:px-8 rounded-xl text-2xl md:text-3xl border-4 border-black shadow-[4px_4px_0_#000] flex items-center justify-center w-full md:w-auto md:absolute md:right-6">
+                    ⏸️ 暫停
                 </button>
             </div>
         </div>
 
-        <!-- ================= GAME OVER SCREEN ================= -->
-        <div id="game-over-screen" class="hidden absolute inset-0 z-50 flex flex-col items-center justify-center bg-white bg-opacity-95 p-6">
-            <h2 class="text-5xl md:text-6xl font-black text-blue-800 mb-4 drop-shadow-sm text-center">🎉 挑戰完成！</h2>
-            <div class="text-2xl md:text-3xl text-gray-700 mb-8 font-bold bg-gray-100 px-6 py-3 rounded-3xl shadow-inner border-2 border-gray-200 text-center">難度：<span id="final-level" class="text-red-500"></span></div>
-            <div class="flex flex-col sm:flex-row gap-4 w-full max-w-xs sm:max-w-md justify-center">
-                <button onclick="goHome()" class="btn bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-8 rounded-2xl text-2xl shadow-[0_5px_0_#4b5563]">
+        <!-- ================= STREAMING_CHUNK:Game Over Screen ================= -->
+        <div id="game-over-screen" class="hidden absolute inset-0 z-50 flex flex-col items-center justify-center bg-white p-6">
+            <h2 class="text-5xl md:text-7xl heavy-text text-black mb-6 border-b-8 border-black pb-4 text-center bg-[#FDE047] px-8 py-2 -rotate-2">🎉 挑戰完成！</h2>
+            <div class="text-3xl md:text-4xl text-black mb-10 heavy-text bg-white px-8 py-4 rounded-xl border-4 border-black shadow-[6px_6px_0_#000] text-center">難度：<span id="final-level" class="text-[#EF4444]"></span></div>
+            <div class="flex flex-col md:flex-row gap-4 md:gap-6 w-full max-w-[300px] md:max-w-md justify-center">
+                <button onclick="goHome()" class="btn bg-gray-300 text-black heavy-text py-4 px-8 md:px-10 rounded-xl text-2xl md:text-3xl border-4 border-black shadow-[6px_6px_0_#000] w-full">
                     回首頁
                 </button>
-                <button onclick="startGame(currentLevel)" class="btn bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-2xl text-2xl shadow-[0_5px_0_#166534]">
+                <button onclick="startGame(currentLevel)" class="btn bg-[#4ADE80] text-black heavy-text py-4 px-8 md:px-10 rounded-xl text-2xl md:text-3xl border-4 border-black shadow-[6px_6px_0_#000] w-full">
                     再玩一次
                 </button>
             </div>
         </div>
     </div>
 
+    <!-- ================= STREAMING_CHUNK:High Contrast SVG Assets & Scripts ================= -->
     <script>
         function toggleFullScreen() {
             if (!document.fullscreenElement) {
@@ -203,37 +214,42 @@
             }
         }
 
+        // 高對比 SVG：極粗黑邊，純黑字體
         const SVGS = {
-            coin1: `<svg class="money-item" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="48" fill="#e5e7eb" stroke="#9ca3af" stroke-width="4"/><circle cx="50" cy="50" r="40" fill="none" stroke="#d1d5db" stroke-width="2"/><text x="50" y="65" font-family="Arial, sans-serif" font-size="45" font-weight="bold" fill="#4b5563" text-anchor="middle">1</text></svg>`,
-            coin5: `<svg class="money-item" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="48" fill="#d1d5db" stroke="#9ca3af" stroke-width="4"/><circle cx="50" cy="50" r="40" fill="none" stroke="#9ca3af" stroke-width="2"/><text x="50" y="65" font-family="Arial, sans-serif" font-size="45" font-weight="bold" fill="#374151" text-anchor="middle">5</text></svg>`,
-            coin10: `<svg class="money-item" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="48" fill="#d1d5db" stroke="#6b7280" stroke-width="4"/><circle cx="50" cy="50" r="38" fill="none" stroke="#6b7280" stroke-width="1.5"/><text x="50" y="65" font-family="Arial, sans-serif" font-size="45" font-weight="bold" fill="#1f2937" text-anchor="middle">10</text></svg>`,
-            coin50: `<svg class="money-item" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="48" fill="#fcd34d" stroke="#d97706" stroke-width="4"/><circle cx="50" cy="50" r="38" fill="none" stroke="#d97706" stroke-width="2" stroke-dasharray="4,2"/><text x="50" y="65" font-family="Arial, sans-serif" font-size="45" font-weight="bold" fill="#92400e" text-anchor="middle">50</text></svg>`,
-            bill100: `<svg class="money-item bill-svg" viewBox="0 0 240 110" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="236" height="106" rx="8" fill="#fca5a5" stroke="#ef4444" stroke-width="3"/><rect x="10" y="10" width="220" height="90" rx="4" fill="none" stroke="#f87171" stroke-width="2"/><text x="120" y="70" font-family="Arial, sans-serif" font-size="55" font-weight="900" fill="#991b1b" text-anchor="middle" letter-spacing="2">100</text><text x="25" y="30" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#b91c1c">壹佰圓</text></svg>`,
-            bill500: `<svg class="money-item bill-svg" viewBox="0 0 240 110" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="236" height="106" rx="8" fill="#93c5fd" stroke="#3b82f6" stroke-width="3"/><rect x="10" y="10" width="220" height="90" rx="4" fill="none" stroke="#60a5fa" stroke-width="2"/><text x="120" y="70" font-family="Arial, sans-serif" font-size="55" font-weight="900" fill="#1e3a8a" text-anchor="middle" letter-spacing="2">500</text><text x="25" y="30" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#1d4ed8">伍佰圓</text></svg>`,
-            bill1000: `<svg class="money-item bill-svg" viewBox="0 0 240 110" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="236" height="106" rx="8" fill="#bfdbfe" stroke="#2563eb" stroke-width="3"/><rect x="10" y="10" width="220" height="90" rx="4" fill="none" stroke="#60a5fa" stroke-width="2"/><text x="120" y="70" font-family="Arial, sans-serif" font-size="55" font-weight="900" fill="#1e40af" text-anchor="middle" letter-spacing="2">1000</text><text x="25" y="30" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#1d4ed8">壹仟圓</text></svg>`
+            coin1: `<svg class="money-item" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="46" fill="#e5e7eb" stroke="#000000" stroke-width="6"/><circle cx="50" cy="50" r="38" fill="none" stroke="#000000" stroke-width="2"/><text x="50" y="66" font-family="Arial, sans-serif" font-size="46" font-weight="900" fill="#000000" text-anchor="middle">1</text></svg>`,
+            coin5: `<svg class="money-item" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="46" fill="#d1d5db" stroke="#000000" stroke-width="6"/><circle cx="50" cy="50" r="38" fill="none" stroke="#000000" stroke-width="2"/><text x="50" y="66" font-family="Arial, sans-serif" font-size="46" font-weight="900" fill="#000000" text-anchor="middle">5</text></svg>`,
+            coin10: `<svg class="money-item" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="46" fill="#d1d5db" stroke="#000000" stroke-width="6"/><circle cx="50" cy="50" r="36" fill="none" stroke="#000000" stroke-width="3"/><text x="50" y="66" font-family="Arial, sans-serif" font-size="46" font-weight="900" fill="#000000" text-anchor="middle">10</text></svg>`,
+            coin50: `<svg class="money-item" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="46" fill="#fcd34d" stroke="#000000" stroke-width="6"/><circle cx="50" cy="50" r="36" fill="none" stroke="#000000" stroke-width="3" stroke-dasharray="4,2"/><text x="50" y="66" font-family="Arial, sans-serif" font-size="46" font-weight="900" fill="#000000" text-anchor="middle">50</text></svg>`,
+            bill100: `<svg class="money-item bill-svg" viewBox="0 0 240 110" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="234" height="104" rx="8" fill="#fca5a5" stroke="#000000" stroke-width="6"/><rect x="12" y="12" width="216" height="86" rx="4" fill="none" stroke="#000000" stroke-width="3"/><text x="120" y="70" font-family="Arial, sans-serif" font-size="55" font-weight="900" fill="#000000" text-anchor="middle" letter-spacing="2">100</text><text x="25" y="30" font-family="Arial, sans-serif" font-size="16" font-weight="900" fill="#000000">壹佰圓</text></svg>`,
+            bill500: `<svg class="money-item bill-svg" viewBox="0 0 240 110" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="234" height="104" rx="8" fill="#93c5fd" stroke="#000000" stroke-width="6"/><rect x="12" y="12" width="216" height="86" rx="4" fill="none" stroke="#000000" stroke-width="3"/><text x="120" y="70" font-family="Arial, sans-serif" font-size="55" font-weight="900" fill="#000000" text-anchor="middle" letter-spacing="2">500</text><text x="25" y="30" font-family="Arial, sans-serif" font-size="16" font-weight="900" fill="#000000">伍佰圓</text></svg>`,
+            bill1000: `<svg class="money-item bill-svg" viewBox="0 0 240 110" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="234" height="104" rx="8" fill="#bfdbfe" stroke="#000000" stroke-width="6"/><rect x="12" y="12" width="216" height="86" rx="4" fill="none" stroke="#000000" stroke-width="3"/><text x="120" y="70" font-family="Arial, sans-serif" font-size="55" font-weight="900" fill="#000000" text-anchor="middle" letter-spacing="2">1000</text><text x="25" y="30" font-family="Arial, sans-serif" font-size="16" font-weight="900" fill="#000000">壹仟圓</text></svg>`
         };
 
         const ITEMS_DEF = [
-            { val: 1, type: 'coin', w: 75, h: 75, svg: SVGS.coin1 },
-            { val: 5, type: 'coin', w: 82, h: 82, svg: SVGS.coin5 },
-            { val: 10, type: 'coin', w: 82, h: 82, svg: SVGS.coin10 },
-            { val: 50, type: 'coin', w: 95, h: 95, svg: SVGS.coin50 },
-            { val: 100, type: 'bill', w: 220, h: 100, svg: SVGS.bill100 },
-            { val: 500, type: 'bill', w: 220, h: 100, svg: SVGS.bill500 },
-            { val: 1000, type: 'bill', w: 220, h: 100, svg: SVGS.bill1000 }
+            { val: 1, type: 'coin', w: 100, h: 100, svg: SVGS.coin1 },
+            { val: 5, type: 'coin', w: 110, h: 110, svg: SVGS.coin5 },
+            { val: 10, type: 'coin', w: 110, h: 110, svg: SVGS.coin10 },
+            { val: 50, type: 'coin', w: 125, h: 125, svg: SVGS.coin50 },
+            { val: 100, type: 'bill', w: 310, h: 145, svg: SVGS.bill100 },
+            { val: 500, type: 'bill', w: 310, h: 145, svg: SVGS.bill500 },
+            { val: 1000, type: 'bill', w: 310, h: 145, svg: SVGS.bill1000 }
         ];
 
-        const TOTAL_ROUNDS = 10;
+        let totalRounds = 10;
         const LEVELS = {
             1: { name: '第一關 (簡單)', isMemoryMode: false },
             2: { name: '第二關 (中等)', isMemoryMode: false },
             3: { name: '第三關 (困難)', isMemoryMode: false },
-            4: { name: '🧠 魔王關卡 (記憶)', isMemoryMode: true }
+            4: { name: '🧠 魔王關卡 (記憶)', isMemoryMode: true },
+            5: { name: '🛒 第五關 (老闆找錢)', isMemoryMode: false }
         };
 
+        // ================= STREAMING_CHUNK:State and Game Logic Initialization =================
         let currentLevel = 1;
         let currentRound = 1;
         let currentTotal = 0;
+        let currentAnswer = 0;
+        let shoppingCost = 0;
         let timerInterval;
         let memoryTimeouts = [];
         let answerTimeout;
@@ -241,6 +257,7 @@
         let timeLeft = 0;
         let selectedTime = 30;
         let isSequencePlaying = false; 
+        let isPaused = false; 
 
         const startScreen = document.getElementById('start-screen');
         const gameScreen = document.getElementById('game-screen');
@@ -250,26 +267,67 @@
         const resultOverlay = document.getElementById('result-overlay');
         const resultMessage = document.getElementById('result-message');
         const timerBar = document.getElementById('timer-bar');
+        const shoppingPrompt = document.getElementById('shopping-prompt');
+
+        function togglePause() {
+            isPaused = !isPaused;
+            const pauseBtn = document.getElementById('pause-btn');
+            if (isPaused) {
+                pauseBtn.innerHTML = '▶️ 繼續';
+                pauseBtn.className = 'btn bg-[#EF4444] text-white heavy-text py-3 px-6 md:py-4 md:px-8 rounded-xl text-2xl md:text-3xl border-4 border-black shadow-[4px_4px_0_#000] flex items-center justify-center w-full md:w-auto md:absolute md:right-6';
+            } else {
+                pauseBtn.innerHTML = '⏸️ 暫停';
+                pauseBtn.className = 'btn bg-[#FB923C] text-black heavy-text py-3 px-6 md:py-4 md:px-8 rounded-xl text-2xl md:text-3xl border-4 border-black shadow-[4px_4px_0_#000] flex items-center justify-center w-full md:w-auto md:absolute md:right-6';
+            }
+        }
+
+        function resetPauseButton() {
+            const pauseBtn = document.getElementById('pause-btn');
+            if (pauseBtn) {
+                pauseBtn.innerHTML = '⏸️ 暫停';
+                pauseBtn.className = 'btn bg-[#FB923C] text-black heavy-text py-3 px-6 md:py-4 md:px-8 rounded-xl text-2xl md:text-3xl border-4 border-black shadow-[4px_4px_0_#000] flex items-center justify-center w-full md:w-auto md:absolute md:right-6';
+            }
+        }
+
+        function pausableSleep(ms) {
+            let elapsed = 0;
+            return new Promise(resolve => {
+                const t = setInterval(() => {
+                    if (!isPaused) {
+                        elapsed += 100;
+                    }
+                    if (elapsed >= ms) {
+                        clearInterval(t);
+                        resolve();
+                    }
+                }, 100);
+                memoryTimeouts.push(t);
+            });
+        }
 
         function setGameTime(seconds) {
             selectedTime = seconds;
             document.querySelectorAll('.time-btn').forEach(btn => {
-                btn.classList.remove('border-green-500', 'text-white', 'bg-green-500', 'shadow-md');
-                btn.classList.add('border-gray-300', 'text-gray-800', 'bg-white');
+                btn.className = 'time-btn flex-1 py-2 rounded-lg text-lg font-black border-4 border-black text-black bg-white btn shadow-[4px_4px_0_#000]';
             });
             const activeBtn = document.getElementById(`time-btn-${seconds}`);
-            activeBtn.classList.remove('border-gray-300', 'text-gray-800', 'bg-white');
-            activeBtn.classList.add('border-green-500', 'text-white', 'bg-green-500', 'shadow-md');
+            activeBtn.className = 'time-btn flex-1 py-2 rounded-lg text-lg font-black border-4 border-black text-white bg-black btn shadow-[4px_4px_0_#000]';
         }
 
         function clearAllTimers() {
             clearInterval(timerInterval);
             clearTimeout(answerTimeout);
+            clearInterval(answerTimeout);
             clearTimeout(roundStartTimeout);
-            memoryTimeouts.forEach(t => clearTimeout(t));
+            clearInterval(roundStartTimeout);
+            memoryTimeouts.forEach(t => {
+                clearTimeout(t);
+                clearInterval(t);
+            });
             memoryTimeouts = [];
         }
 
+        // ================= STREAMING_CHUNK:Game Flow Control =================
         function startGame(level) {
             clearAllTimers();
             currentLevel = level;
@@ -280,17 +338,27 @@
             void gameScreen.offsetWidth;
 
             currentRound = 1;
-            document.getElementById('total-rounds-display').innerText = TOTAL_ROUNDS;
+            totalRounds = (level === 5) ? 20 : 10;
+            document.getElementById('total-rounds-display').innerText = totalRounds;
             
+            if (currentLevel === 5) {
+                shoppingPrompt.classList.remove('hidden');
+            } else {
+                shoppingPrompt.classList.add('hidden');
+            }
+
             startRound();
         }
 
         function startRound() {
+            isPaused = false;
+            resetPauseButton();
             clearAllTimers();
             document.getElementById('round-display').innerText = currentRound;
             
             showAnswerBtn.disabled = false;
             showAnswerBtn.innerText = "看正確解答";
+            showAnswerBtn.className = 'btn bg-[#FDE047] text-black heavy-text py-4 px-12 md:px-16 rounded-xl text-3xl md:text-5xl border-4 border-black shadow-[6px_6px_0_#000] transition-all w-full md:w-auto';
             
             moneyArea.innerHTML = ''; 
             resultOverlay.classList.add('hidden');
@@ -304,9 +372,15 @@
             if (LEVELS[currentLevel].isMemoryMode) {
                 playMemorySequence();
             } else {
-                roundStartTimeout = setTimeout(() => {
-                    startTimer();
-                }, 500);
+                let startWait = 5; 
+                roundStartTimeout = setInterval(() => {
+                    if (isPaused) return; 
+                    startWait--;
+                    if (startWait <= 0) {
+                        clearInterval(roundStartTimeout);
+                        startTimer();
+                    }
+                }, 100);
             }
         }
 
@@ -314,6 +388,8 @@
             isSequencePlaying = true;
             showAnswerBtn.disabled = true; 
             showAnswerBtn.innerText = "請專心記憶...";
+            showAnswerBtn.classList.remove('bg-[#FDE047]');
+            showAnswerBtn.classList.add('bg-gray-300');
             
             const items = moneyArea.querySelectorAll('.money-item-container'); 
             
@@ -327,24 +403,20 @@
                 svgChild.classList.remove('fade-out');
                 svgChild.classList.add('animate-pop-in');
                 
-                await new Promise(resolve => { 
-                    const t = setTimeout(resolve, 1500); 
-                    memoryTimeouts.push(t);
-                });
+                await pausableSleep(2000); 
                 if (!isSequencePlaying) return;
                 
                 svgChild.classList.remove('animate-pop-in');
                 svgChild.classList.add('fade-out');
                 
-                await new Promise(resolve => { 
-                    const t = setTimeout(resolve, 600); 
-                    memoryTimeouts.push(t);
-                });
+                await pausableSleep(800); 
             }
             
             if (isSequencePlaying) {
                 showAnswerBtn.innerText = "看正確解答";
                 showAnswerBtn.disabled = false;
+                showAnswerBtn.classList.remove('bg-gray-300');
+                showAnswerBtn.classList.add('bg-[#FDE047]');
                 startTimer();
             }
         }
@@ -352,6 +424,8 @@
         function startTimer() {
             clearAllTimers();
             timerInterval = setInterval(() => {
+                if (isPaused) return; 
+
                 timeLeft -= 0.1;
                 updateTimerDisplay();
                 
@@ -364,25 +438,28 @@
             }, 100);
         }
 
+        // 高對比計時器顯示
         function updateTimerDisplay() {
             const percentage = (timeLeft / selectedTime) * 100;
             timerBar.style.width = `${percentage}%`;
             
             if (percentage > 50) {
-                timerBar.className = 'h-full bg-green-500 w-full rounded-r-full shadow-inner';
+                timerBar.className = 'h-full bg-[#4ADE80] w-full border-r-4 border-black';
             } else if (percentage > 25) {
-                timerBar.className = 'h-full bg-yellow-500 w-full rounded-r-full shadow-inner';
+                timerBar.className = 'h-full bg-[#FBBF24] w-full border-r-4 border-black';
             } else {
-                timerBar.className = 'h-full bg-red-500 w-full rounded-r-full shadow-inner';
+                timerBar.className = 'h-full bg-[#EF4444] w-full border-r-4 border-black';
             }
         }
 
+        // ================= STREAMING_CHUNK:Money Generation Engine =================
         function generateMoney() {
             currentTotal = 0;
+            currentAnswer = 0;
             const areaWidth = moneyArea.clientWidth || window.innerWidth;
-            const areaHeight = moneyArea.clientHeight || (window.innerHeight - 200);
-            const paddingX = 20; 
-            const paddingY = 20; 
+            const areaHeight = moneyArea.clientHeight || (window.innerHeight - 300);
+            const paddingX = 40; 
+            const paddingY = 30; 
             
             let targetMaxSum = 0;
             let availableItems = [];
@@ -402,24 +479,22 @@
                     targetMaxSum = 300; availableItems = [10, 50]; minItems = 6; maxItems = 7;
                 }
             } else if (currentLevel === 2) { 
-                if (currentRound <= 2) { 
-                    targetMaxSum = 150; availableItems = [1, 5, 10, 50, 100]; minItems = 2; maxItems = 3;
-                } else if (currentRound <= 5) { 
-                    targetMaxSum = 600; availableItems = [1, 5, 10, 50, 100]; minItems = 4; maxItems = 6;
-                } else if (currentRound <= 8) { 
-                    targetMaxSum = 1500; availableItems = [1, 5, 10, 50, 100, 500]; minItems = 6; maxItems = 7;
+                if (currentRound <= 3) { 
+                    targetMaxSum = 250; availableItems = [1, 5, 10, 50, 100]; minItems = 3; maxItems = 4;
+                } else if (currentRound <= 6) { 
+                    targetMaxSum = 450; availableItems = [1, 5, 10, 50, 100]; minItems = 4; maxItems = 6;
                 } else { 
-                    targetMaxSum = 2500; availableItems = [1, 5, 10, 50, 100, 500]; minItems = 7; maxItems = 9;
+                    targetMaxSum = 600; availableItems = [1, 5, 10, 50, 100]; minItems = 5; maxItems = 8;
                 }
             } else if (currentLevel === 3) { 
-                if (currentRound <= 2) { 
-                    targetMaxSum = 600; availableItems = [1, 5, 10, 50, 100, 500, 1000]; minItems = 3; maxItems = 4;
-                } else if (currentRound <= 5) { 
-                    targetMaxSum = 2500; availableItems = [1, 5, 10, 50, 100, 500, 1000]; minItems = 5; maxItems = 6;
+                if (currentRound <= 3) { 
+                    targetMaxSum = 1200; availableItems = [1, 5, 10, 50, 100, 500]; minItems = 3; maxItems = 5;
+                } else if (currentRound <= 6) { 
+                    targetMaxSum = 3000; availableItems = [1, 5, 10, 50, 100, 500, 1000]; minItems = 5; maxItems = 7;
                 } else if (currentRound <= 8) { 
-                    targetMaxSum = 5000; availableItems = [1, 5, 10, 50, 100, 500, 1000]; minItems = 6; maxItems = 8;
+                    targetMaxSum = 5500; availableItems = [1, 5, 10, 50, 100, 500, 1000]; minItems = 6; maxItems = 8;
                 } else { 
-                    targetMaxSum = 8000; availableItems = [1, 5, 10, 50, 100, 500, 1000]; minItems = 8; maxItems = 10;
+                    targetMaxSum = 8500; availableItems = [1, 5, 10, 50, 100, 500, 1000]; minItems = 8; maxItems = 10;
                 }
             } else if (currentLevel === 4) { 
                 if (currentRound <= 2) { 
@@ -429,16 +504,42 @@
                 } else { 
                     targetMaxSum = 2500; availableItems = [1, 5, 10, 50, 100, 500, 1000]; minItems = 6; maxItems = 7;
                 }
+            } else if (currentLevel === 5) { 
+                if (currentRound <= 4) { 
+                    targetMaxSum = 50; availableItems = [50]; minItems = 1; maxItems = 1;
+                    shoppingCost = Math.floor(Math.random() * 8 + 2) * 5; 
+                } else if (currentRound <= 8) { 
+                    targetMaxSum = 100; availableItems = [100]; minItems = 1; maxItems = 1;
+                    shoppingCost = Math.floor(Math.random() * 16 + 3) * 5; 
+                } else if (currentRound <= 12) { 
+                    targetMaxSum = 300; availableItems = [100]; minItems = 3; maxItems = 3;
+                    shoppingCost = Math.floor(Math.random() * 36 + 22) * 5; 
+                } else if (currentRound <= 15) { 
+                    targetMaxSum = 500; availableItems = [500]; minItems = 1; maxItems = 1;
+                    shoppingCost = Math.floor(Math.random() * 75 + 23) * 5; 
+                } else { 
+                    targetMaxSum = 1000; availableItems = [1000]; minItems = 1; maxItems = 1;
+                    shoppingCost = Math.floor(Math.random() * 850) + 101; 
+                }
+                document.getElementById('shopping-cost').innerText = shoppingCost;
             }
 
             let generatedItems = [];
-            const MAX_TRIES_PER_ITEM = 300; 
+            const MAX_TRIES_PER_ITEM = 400; 
             let keepGenerating = true;
             const targetItemsCount = Math.floor(Math.random() * (maxItems - minItems + 1)) + minItems;
 
             while (keepGenerating) {
-                const valIndex = Math.floor(Math.random() * availableItems.length);
-                const val = availableItems[valIndex];
+                let val;
+                
+                if (currentLevel === 2 && generatedItems.length === 0) {
+                    val = 100;
+                } else if (currentLevel === 3 && generatedItems.length === 0) {
+                    val = 500;
+                } else {
+                    const valIndex = Math.floor(Math.random() * availableItems.length);
+                    val = availableItems[valIndex];
+                }
                 
                 if (currentTotal + val > targetMaxSum || generatedItems.length >= targetItemsCount) {
                     if (generatedItems.length >= minItems || generatedItems.length > 0) {
@@ -486,6 +587,12 @@
                 }
             }
 
+            if (currentLevel === 5) {
+                currentAnswer = currentTotal - shoppingCost;
+            } else {
+                currentAnswer = currentTotal;
+            }
+
             generatedItems.forEach((data) => {
                 const el = document.createElement('div');
                 el.className = 'money-item-container'; 
@@ -502,11 +609,11 @@
                     svgChild.style.opacity = '0'; 
                 } else {
                     svgChild.classList.add('animate-pop-in');
-                    svgChild.style.animationDelay = `${Math.random() * 0.3}s`;
+                    svgChild.style.animationDelay = `${Math.random() * 0.4}s`;
                 }
                 
                 if (data.type === 'bill') {
-                    const rot = (Math.random() * 12) - 6; 
+                    const rot = (Math.random() * 16) - 8; 
                     svgChild.style.transform = `rotate(${rot}deg)`;
                 }
 
@@ -514,6 +621,7 @@
             });
         }
 
+        // ================= STREAMING_CHUNK:Result Display & Flow =================
         function showAnswer(isTimeUp = false) {
             if (showAnswerBtn.disabled) return; 
 
@@ -536,20 +644,30 @@
             void resultMessage.offsetWidth; 
             resultMessage.classList.add('animate-pop-in');
 
-            if (isTimeUp) {
-                resultMessage.innerHTML = '<div class="text-2xl md:text-3xl text-yellow-600 font-black drop-shadow-md">⏰ 時間到！</div><div class="text-3xl md:text-5xl text-white font-black bg-green-800/95 px-6 md:px-10 py-2.5 rounded-2xl border-4 border-yellow-400 shadow-2xl mt-1">正確答案: ' + currentTotal + ' 元</div>';
+            // 高對比結果視窗
+            let titleHtml = isTimeUp ? '<div class="text-3xl text-black bg-[#FDE047] px-4 py-1 border-4 border-black shadow-[4px_4px_0_#000] -rotate-2">⏰ 時間到！</div>' : '<div class="text-3xl text-black bg-[#4ADE80] px-4 py-1 border-4 border-black shadow-[4px_4px_0_#000] -rotate-2">💡 正確解答</div>';
+            
+            if (currentLevel === 5) {
+                resultMessage.innerHTML = titleHtml + '<div class="text-5xl md:text-6xl text-black font-black bg-white px-8 md:px-12 py-4 rounded-2xl border-8 border-black shadow-[8px_8px_0_#000] mt-3">應找回: ' + currentAnswer + ' 元</div>';
             } else {
-                resultMessage.innerHTML = '<div class="text-2xl md:text-3xl text-green-700 font-black drop-shadow-md">💡 正確解答</div><div class="text-3xl md:text-5xl text-white font-black bg-green-800/95 px-6 md:px-10 py-2.5 rounded-2xl border-4 border-green-400 shadow-2xl mt-1">正確答案: ' + currentTotal + ' 元</div>';
+                resultMessage.innerHTML = titleHtml + '<div class="text-5xl md:text-6xl text-black font-black bg-white px-8 md:px-12 py-4 rounded-2xl border-8 border-black shadow-[8px_8px_0_#000] mt-3">正確答案: ' + currentAnswer + ' 元</div>';
             }
 
-            answerTimeout = setTimeout(() => {
-                currentRound++;
-                if (currentRound > TOTAL_ROUNDS) {
-                    endGame();
-                } else {
-                    startRound();
+            let waitTime = 40; 
+            answerTimeout = setInterval(() => {
+                if (isPaused) return; 
+                
+                waitTime--;
+                if (waitTime <= 0) {
+                    clearInterval(answerTimeout);
+                    currentRound++;
+                    if (currentRound > totalRounds) {
+                        endGame();
+                    } else {
+                        startRound();
+                    }
                 }
-            }, 4000); 
+            }, 100); 
         }
 
         function endGame() {
@@ -560,14 +678,14 @@
 
         function goHome() {
             isSequencePlaying = false;
+            isPaused = false;
+            resetPauseButton();
             clearAllTimers();
 
             startScreen.classList.remove('hidden');
             gameScreen.classList.add('hidden');
             gameOverScreen.classList.add('hidden');
         }
-
-        document.getElementById('total-rounds-display').innerText = TOTAL_ROUNDS;
 
     </script>
 </body>
