@@ -33,6 +33,7 @@
             flex-direction: column;
         }
 
+        /* 互動按鈕的實體下壓效果 */
         .btn {
             transition: all 0.1s ease-in-out;
         }
@@ -48,6 +49,7 @@
             box-shadow: none !important;
         }
 
+        /* 高對比硬邊陰影 */
         .money-item {
             position: absolute;
             filter: drop-shadow(4px 4px 0px rgba(0,0,0,1));
@@ -79,6 +81,7 @@
 
     <div id="game-wrapper">
         
+        <!-- ================= STREAMING_CHUNK:Start Screen UI ================= -->
         <div id="start-screen" class="absolute inset-0 z-50 flex flex-col bg-[#F8F9FA] overflow-y-auto overflow-x-hidden p-6">
             <div class="flex-1 flex flex-col items-center justify-center w-full py-4 relative z-10">
                 
@@ -130,6 +133,7 @@
             </div>
         </div>
 
+        <!-- ================= STREAMING_CHUNK:Game Screen UI ================= -->
         <div id="game-screen" class="hidden flex-1 flex flex-col w-full h-full relative bg-white">
             
             <div class="w-full bg-white border-b-4 border-black p-3 md:p-4 flex justify-between items-center z-20 shrink-0">
@@ -151,7 +155,7 @@
                 <span class="text-xl md:text-3xl heavy-text text-black bg-white px-6 py-2 border-4 border-black shadow-[4px_4px_0_#000] rotate-1">今天出門總共花了 <span id="shopping-cost" class="text-[#EF4444] text-4xl mx-2 underline">0</span> 元</span>
             </div>
 
-            <!-- 非遮擋式解答頂部橫幅 (絕對不覆蓋下方錢幣區域，方便長輩對照驗證) -->
+            <!-- 解答橫幅 -->
             <div id="result-overlay" class="hidden w-full bg-[#FEF08A] border-b-4 border-black p-3 md:p-4 flex items-center justify-center z-30 shrink-0 shadow-[0_4px_0_#000]">
                 <div id="result-message" class="text-center heavy-text flex items-center gap-4 text-2xl md:text-4xl text-black">
                     <!-- 答案顯示區 -->
@@ -162,16 +166,28 @@
                 <!-- Javascript 生成的錢幣放這裡 -->
             </div>
 
+            <!-- 控制列 (加入下一題與再看一次按鈕) -->
             <div class="w-full bg-[#E5E7EB] border-t-4 border-black p-4 flex flex-col md:flex-row items-center justify-center gap-4 z-20 relative h-auto md:h-[120px] shrink-0">
+                
+                <button onclick="replayMemory()" id="replay-btn" class="hidden btn bg-[#3B82F6] text-white heavy-text py-3 px-6 md:py-4 md:px-8 rounded-xl text-2xl md:text-3xl border-4 border-black shadow-[4px_4px_0_#000] flex items-center justify-center w-full md:w-auto md:absolute md:left-6">
+                    👀 再看一次
+                </button>
+
                 <button onclick="showAnswer()" id="show-answer-btn" class="btn bg-[#FDE047] text-black heavy-text py-4 px-12 md:px-16 rounded-xl text-3xl md:text-5xl border-4 border-black shadow-[6px_6px_0_#000] transition-all w-full md:w-auto">
                     看正確解答
                 </button>
+
+                <button onclick="nextRound()" id="next-btn" class="hidden btn bg-[#4ADE80] text-black heavy-text py-4 px-12 md:px-16 rounded-xl text-3xl md:text-5xl border-4 border-black shadow-[6px_6px_0_#000] transition-all w-full md:w-auto">
+                    下一題 ➡️
+                </button>
+
                 <button onclick="togglePause()" id="pause-btn" class="btn bg-[#FB923C] text-black heavy-text py-3 px-6 md:py-4 md:px-8 rounded-xl text-2xl md:text-3xl border-4 border-black shadow-[4px_4px_0_#000] flex items-center justify-center w-full md:w-auto md:absolute md:right-6">
                     ⏸️ 暫停
                 </button>
             </div>
         </div>
 
+        <!-- ================= STREAMING_CHUNK:Game Over UI ================= -->
         <div id="game-over-screen" class="hidden absolute inset-0 z-50 flex flex-col items-center justify-center bg-white p-6">
             <h2 class="text-5xl md:text-7xl heavy-text text-black mb-6 border-b-8 border-black pb-4 text-center bg-[#FDE047] px-8 py-2 -rotate-2">🎉 挑戰完成！</h2>
             <div class="text-3xl md:text-4xl text-black mb-10 heavy-text bg-white px-8 py-4 rounded-xl border-4 border-black shadow-[6px_6px_0_#000] text-center">難度：<span id="final-level" class="text-[#EF4444]"></span></div>
@@ -186,6 +202,7 @@
         </div>
     </div>
 
+    <!-- ================= STREAMING_CHUNK:Assets & Setup ================= -->
     <script>
         function toggleFullScreen() {
             if (!document.fullscreenElement) {
@@ -228,14 +245,15 @@
             5: { name: '第五關 (減法)', isMemoryMode: false }
         };
 
+        // ================= STREAMING_CHUNK:Game Logic Variables =================
         let currentLevel = 1;
         let currentRound = 1;
         let currentTotal = 0;
         let currentAnswer = 0;
         let shoppingCost = 0;
+        let lastAnswer = -1; // 記錄上一題的答案防重複
         let timerInterval;
         let memoryTimeouts = [];
-        let answerTimeout;
         let roundStartTimeout;
         let timeLeft = 0;
         let selectedTime = 30;
@@ -247,6 +265,9 @@
         const gameOverScreen = document.getElementById('game-over-screen');
         const moneyArea = document.getElementById('money-area');
         const showAnswerBtn = document.getElementById('show-answer-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const replayBtn = document.getElementById('replay-btn');
+        const pauseBtn = document.getElementById('pause-btn');
         const resultOverlay = document.getElementById('result-overlay');
         const resultMessage = document.getElementById('result-message');
         const timerBar = document.getElementById('timer-bar');
@@ -254,7 +275,6 @@
 
         function togglePause() {
             isPaused = !isPaused;
-            const pauseBtn = document.getElementById('pause-btn');
             if (isPaused) {
                 pauseBtn.innerHTML = '▶️ 繼續';
                 pauseBtn.className = 'btn bg-[#EF4444] text-white heavy-text py-3 px-6 md:py-4 md:px-8 rounded-xl text-2xl md:text-3xl border-4 border-black shadow-[4px_4px_0_#000] flex items-center justify-center w-full md:w-auto md:absolute md:right-6';
@@ -265,7 +285,6 @@
         }
 
         function resetPauseButton() {
-            const pauseBtn = document.getElementById('pause-btn');
             if (pauseBtn) {
                 pauseBtn.innerHTML = '⏸️ 暫停';
                 pauseBtn.className = 'btn bg-[#FB923C] text-black heavy-text py-3 px-6 md:py-4 md:px-8 rounded-xl text-2xl md:text-3xl border-4 border-black shadow-[4px_4px_0_#000] flex items-center justify-center w-full md:w-auto md:absolute md:right-6';
@@ -299,12 +318,16 @@
 
         function clearAllTimers() {
             clearInterval(timerInterval);
-            clearTimeout(answerTimeout);
             clearTimeout(roundStartTimeout);
-            memoryTimeouts.forEach(t => clearTimeout(t));
+            clearInterval(roundStartTimeout);
+            memoryTimeouts.forEach(t => {
+                clearTimeout(t);
+                clearInterval(t);
+            });
             memoryTimeouts = [];
         }
 
+        // ================= STREAMING_CHUNK:Game Start and Reset =================
         function startGame(level) {
             clearAllTimers();
             currentLevel = level;
@@ -315,6 +338,7 @@
             void gameScreen.offsetWidth;
 
             currentRound = 1;
+            lastAnswer = -1; // 重新開始時清除防重複紀錄
             totalRounds = (level === 5) ? 20 : 10;
             document.getElementById('total-rounds-display').innerText = totalRounds;
             
@@ -333,19 +357,36 @@
             clearAllTimers();
             document.getElementById('round-display').innerText = currentRound;
             
+            // UI 按鈕狀態重置
+            showAnswerBtn.classList.remove('hidden');
             showAnswerBtn.disabled = false;
             showAnswerBtn.innerText = "看正確解答";
             showAnswerBtn.className = 'btn bg-[#FDE047] text-black heavy-text py-4 px-12 md:px-16 rounded-xl text-3xl md:text-5xl border-4 border-black shadow-[6px_6px_0_#000] transition-all w-full md:w-auto';
             
-            moneyArea.innerHTML = ''; 
+            nextBtn.classList.add('hidden');
+            pauseBtn.classList.remove('hidden');
+            
+            if (currentLevel === 4) {
+                replayBtn.classList.remove('hidden');
+            } else {
+                replayBtn.classList.add('hidden');
+            }
+            
             resultOverlay.classList.add('hidden');
             isSequencePlaying = false;
-            
             timeLeft = selectedTime;
             updateTimerDisplay();
 
-            generateMoney();
+            // 防重複出題機制
+            let maxRetries = 10;
+            do {
+                moneyArea.innerHTML = ''; 
+                generateMoney();
+                maxRetries--;
+            } while (currentAnswer === lastAnswer && maxRetries > 0);
             
+            lastAnswer = currentAnswer;
+
             if (LEVELS[currentLevel].isMemoryMode) {
                 playMemorySequence();
             } else {
@@ -361,8 +402,34 @@
             }
         }
 
+        // ================= STREAMING_CHUNK:Memory Sequence and Timers =================
+        function replayMemory() {
+            if (isSequencePlaying) return; 
+            clearAllTimers();
+            isPaused = false;
+            resetPauseButton();
+            
+            // 時間完全重置
+            timeLeft = selectedTime;
+            updateTimerDisplay();
+
+            // 將已經生成的錢幣重置透明度，準備重新播放動畫
+            const items = moneyArea.querySelectorAll('.money-item-container');
+            items.forEach(container => {
+                const svgChild = container.firstChild;
+                svgChild.style.opacity = '0';
+                svgChild.classList.remove('fade-out', 'animate-pop-in');
+            });
+
+            playMemorySequence();
+        }
+
         async function playMemorySequence() {
             isSequencePlaying = true;
+            
+            replayBtn.disabled = true;
+            replayBtn.classList.add('grayscale', 'opacity-50', 'cursor-not-allowed');
+
             showAnswerBtn.disabled = true; 
             showAnswerBtn.innerText = "請專心記憶...";
             showAnswerBtn.classList.remove('bg-[#FDE047]');
@@ -376,8 +443,11 @@
                 const container = items[i];
                 const svgChild = container.firstChild;
                 
+                // 強制瀏覽器重繪 (Reflow)，確保再次套用 class 時動畫能正確重播
+                svgChild.classList.remove('fade-out', 'animate-pop-in');
+                void svgChild.offsetWidth; 
+
                 svgChild.style.opacity = '1';
-                svgChild.classList.remove('fade-out');
                 svgChild.classList.add('animate-pop-in');
                 
                 await pausableSleep(2000); 
@@ -390,10 +460,17 @@
             }
             
             if (isSequencePlaying) {
+                // 修正：記憶序列播放完畢後，必須解除播放狀態，否則「再看一次」按鈕會被永遠鎖死
+                isSequencePlaying = false; 
+
                 showAnswerBtn.innerText = "看正確解答";
                 showAnswerBtn.disabled = false;
                 showAnswerBtn.classList.remove('bg-gray-300');
                 showAnswerBtn.classList.add('bg-[#FDE047]');
+                
+                replayBtn.disabled = false;
+                replayBtn.classList.remove('grayscale', 'opacity-50', 'cursor-not-allowed');
+
                 startTimer();
             }
         }
@@ -428,6 +505,7 @@
             }
         }
 
+        // ================= STREAMING_CHUNK:Money Generation Rules =================
         function generateMoney() {
             currentTotal = 0;
             currentAnswer = 0;
@@ -442,42 +520,44 @@
             let minItems = 0; 
 
             if (currentLevel === 1) { 
+                targetMaxSum = 100;
+                availableItems = [1, 5, 10, 50]; 
                 if (currentRound <= 2) { 
-                    targetMaxSum = 30; availableItems = [1, 5, 10]; minItems = 2; maxItems = 3;
-                } else if (currentRound <= 4) { 
-                    targetMaxSum = 70; availableItems = [1, 5, 10]; minItems = 3; maxItems = 4;
-                } else if (currentRound <= 6) { 
-                    targetMaxSum = 120; availableItems = [1, 5, 10, 50]; minItems = 4; maxItems = 5;
-                } else if (currentRound <= 8) { 
-                    targetMaxSum = 200; availableItems = [5, 10, 50]; minItems = 5; maxItems = 6;
+                    minItems = 2; maxItems = 3;
+                } else if (currentRound <= 5) { 
+                    minItems = 3; maxItems = 4;
                 } else { 
-                    targetMaxSum = 300; availableItems = [10, 50]; minItems = 6; maxItems = 7;
+                    minItems = 4; maxItems = 6;
                 }
             } else if (currentLevel === 2) { 
-                if (currentRound <= 3) { 
-                    targetMaxSum = 250; availableItems = [1, 5, 10, 50, 100]; minItems = 3; maxItems = 4;
-                } else if (currentRound <= 6) { 
-                    targetMaxSum = 450; availableItems = [1, 5, 10, 50, 100]; minItems = 4; maxItems = 6;
+                targetMaxSum = 500;
+                availableItems = [1, 5, 10, 50, 100]; 
+                if (currentRound <= 2) { 
+                    minItems = 2; maxItems = 3;
+                } else if (currentRound <= 5) { 
+                    minItems = 3; maxItems = 4;
                 } else { 
-                    targetMaxSum = 600; availableItems = [1, 5, 10, 50, 100]; minItems = 5; maxItems = 8;
+                    minItems = 4; maxItems = 7;
                 }
             } else if (currentLevel === 3) { 
-                if (currentRound <= 3) { 
-                    targetMaxSum = 1200; availableItems = [1, 5, 10, 50, 100, 500]; minItems = 3; maxItems = 5;
-                } else if (currentRound <= 6) { 
-                    targetMaxSum = 3000; availableItems = [1, 5, 10, 50, 100, 500, 1000]; minItems = 5; maxItems = 7;
-                } else if (currentRound <= 8) { 
-                    targetMaxSum = 5500; availableItems = [1, 5, 10, 50, 100, 500, 1000]; minItems = 6; maxItems = 8;
+                targetMaxSum = 2000;
+                availableItems = [1, 5, 10, 50, 100, 500, 1000]; 
+                if (currentRound <= 2) { 
+                    minItems = 2; maxItems = 3;
+                } else if (currentRound <= 5) { 
+                    minItems = 3; maxItems = 4;
                 } else { 
-                    targetMaxSum = 8500; availableItems = [1, 5, 10, 50, 100, 500, 1000]; minItems = 8; maxItems = 10;
+                    minItems = 4; maxItems = 8;
                 }
             } else if (currentLevel === 4) { 
+                targetMaxSum = 2500; 
+                availableItems = [1, 5, 10, 50, 100, 500, 1000]; 
                 if (currentRound <= 2) { 
-                    targetMaxSum = 100; availableItems = [1, 5, 10, 50]; minItems = 2; maxItems = 3;
+                    minItems = 2; maxItems = 3;
                 } else if (currentRound <= 6) { 
-                    targetMaxSum = 500; availableItems = [1, 5, 10, 50, 100]; minItems = 4; maxItems = 5;
+                    minItems = 4; maxItems = 5;
                 } else { 
-                    targetMaxSum = 2500; availableItems = [1, 5, 10, 50, 100, 500, 1000]; minItems = 6; maxItems = 7;
+                    minItems = 6; maxItems = 7;
                 }
             } else if (currentLevel === 5) { 
                 if (currentRound <= 4) { 
@@ -512,37 +592,37 @@
                 if (currentTotal + val > targetMaxSum || generatedItems.length >= targetItemsCount) {
                     if (generatedItems.length >= minItems) {
                         break; 
+                    } else {
+                        val = Math.min(...availableItems);
+                        targetMaxSum += val; 
                     }
                 }
 
                 const itemData = ITEMS_DEF.find(item => item.val === val);
                 if (!itemData) continue;
 
-                const w = itemData.w;
-                const h = itemData.h;
-                
                 let placed = false;
                 let attempts = 0;
 
                 while (!placed && attempts < MAX_TRIES_PER_ITEM) {
                     attempts++;
-                    const left = paddingX + Math.random() * Math.max(1, (areaWidth - w - paddingX * 2));
-                    const top = paddingY + Math.random() * Math.max(1, (areaHeight - h - paddingY * 2));
+                    const left = paddingX + Math.random() * Math.max(1, (areaWidth - itemData.w - paddingX * 2));
+                    const top = paddingY + Math.random() * Math.max(1, (areaHeight - itemData.h - paddingY * 2));
 
                     let overlap = false;
                     const buffer = 15; 
                     for (let existing of generatedItems) {
                         if (left < existing.left + existing.w + buffer &&
-                            left + w + buffer > existing.left &&
+                            left + itemData.w + buffer > existing.left &&
                             top < existing.top + existing.h + buffer &&
-                            h + top + buffer > existing.top) {
+                            itemData.h + top + buffer > existing.top) {
                             overlap = true;
                             break;
                         }
                     }
 
                     if (!overlap) {
-                        generatedItems.push({ val: val, type: itemData.type, left: left, top: top, w: w, h: h, svg: itemData.svg });
+                        generatedItems.push({ val: val, type: itemData.type, left: left, top: top, w: itemData.w, h: itemData.h, svg: itemData.svg });
                         currentTotal += val;
                         placed = true;
                     }
@@ -552,12 +632,13 @@
                     if (generatedItems.length >= minItems) {
                         keepGenerating = false;
                     } else {
-                        break;
+                        break; 
                     }
                 }
             }
 
-            while (currentLevel !== 5 && generatedItems.length < 2) {
+            // 防呆：強制確保第一至四關最少有指定的 minItems 數量 (至少2個)
+            while (currentLevel !== 5 && generatedItems.length < minItems) {
                 let lowestVal = Math.min(...availableItems);
                 const itemData = ITEMS_DEF.find(item => item.val === lowestVal);
                 if (!itemData) break;
@@ -639,12 +720,18 @@
             });
         }
 
+        // ================= STREAMING_CHUNK:Manual Progression =================
         function showAnswer(isTimeUp = false) {
-            if (showAnswerBtn.disabled) return; 
+            if (showAnswerBtn.disabled && !isTimeUp) return; 
 
             isSequencePlaying = false;
             clearAllTimers();
-            showAnswerBtn.disabled = true;
+            
+            // 按下解答後，隱藏原按鈕，顯示「下一題」按鈕
+            showAnswerBtn.classList.add('hidden');
+            nextBtn.classList.remove('hidden');
+            pauseBtn.classList.add('hidden');
+            replayBtn.classList.add('hidden'); // 解答公佈後關閉再看一次功能
 
             if (LEVELS[currentLevel].isMemoryMode) {
                 const items = moneyArea.querySelectorAll('.money-item-container');
@@ -656,7 +743,6 @@
                 });
             }
 
-            // 非遮擋式頂部橫幅呈現解答
             resultOverlay.classList.remove('hidden');
             resultMessage.classList.remove('animate-pop-in');
             void resultMessage.offsetWidth; 
@@ -665,26 +751,21 @@
             let titleHtml = isTimeUp ? '<span class="bg-[#EF4444] text-white px-3 py-1 border-2 border-black rounded-lg">⏰ 時間到！</span>' : '<span class="bg-[#4ADE80] text-black px-3 py-1 border-2 border-black rounded-lg">💡 正確解答</span>';
             
             if (currentLevel === 5) {
-                resultMessage.innerHTML = titleHtml + '<span>應找回: ' + currentAnswer + ' 元</span>';
+                resultMessage.innerHTML = titleHtml + '<span>應剩下: ' + currentAnswer + ' 元</span>';
             } else {
                 resultMessage.innerHTML = titleHtml + '<span>正確答案: ' + currentAnswer + ' 元</span>';
             }
+            
+            // 移除了自動換題的 setInterval，現在完全交由玩家點擊「下一題」
+        }
 
-            let waitTime = 40; 
-            answerTimeout = setInterval(() => {
-                if (isPaused) return; 
-                
-                waitTime--;
-                if (waitTime <= 0) {
-                    clearInterval(answerTimeout);
-                    currentRound++;
-                    if (currentRound > totalRounds) {
-                        endGame();
-                    } else {
-                        startRound();
-                    }
-                }
-            }, 100); 
+        function nextRound() {
+            currentRound++;
+            if (currentRound > totalRounds) {
+                endGame();
+            } else {
+                startRound();
+            }
         }
 
         function endGame() {
@@ -693,7 +774,7 @@
             document.getElementById('final-level').innerText = LEVELS[currentLevel].name;
         }
 
-        goHome = function() {
+        function goHome() {
             isSequencePlaying = false;
             isPaused = false;
             resetPauseButton();
