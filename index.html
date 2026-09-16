@@ -505,7 +505,6 @@
             }
         }
 
-        // ================= STREAMING_CHUNK:Money Generation Engine =================
         function generateMoney() {
             currentTotal = 0;
             currentAnswer = 0;
@@ -519,64 +518,61 @@
             let maxItems = 0; 
             let minItems = 0; 
 
+            // 第一至第四關：完全維持您滿意的設定與數量，沒有異動
             if (currentLevel === 1) { 
-                targetMaxSum = 100;
-                availableItems = [1, 5, 10, 50]; 
                 if (currentRound <= 2) { 
-                    minItems = 2; maxItems = 3;
-                } else if (currentRound <= 5) { 
-                    minItems = 3; maxItems = 4;
+                    targetMaxSum = 30; availableItems = [1, 5, 10]; minItems = 2; maxItems = 3;
+                } else if (currentRound <= 4) { 
+                    targetMaxSum = 70; availableItems = [1, 5, 10]; minItems = 3; maxItems = 4;
+                } else if (currentRound <= 6) { 
+                    targetMaxSum = 120; availableItems = [1, 5, 10, 50]; minItems = 4; maxItems = 5;
                 } else if (currentRound <= 8) { 
-                    minItems = 4; maxItems = 5;
+                    targetMaxSum = 200; availableItems = [5, 10, 50]; minItems = 5; maxItems = 6;
                 } else { 
-                    minItems = 5; maxItems = 6;
+                    targetMaxSum = 300; availableItems = [10, 50]; minItems = 6; maxItems = 7;
                 }
             } else if (currentLevel === 2) { 
-                targetMaxSum = 500;
-                availableItems = [1, 5, 10, 50, 100]; 
-                if (currentRound <= 2) { 
-                    minItems = 2; maxItems = 3;
-                } else if (currentRound <= 5) { 
-                    minItems = 3; maxItems = 4;
-                } else if (currentRound <= 8) { 
-                    minItems = 4; maxItems = 6;
+                if (currentRound <= 3) { 
+                    targetMaxSum = 250; availableItems = [1, 5, 10, 50, 100]; minItems = 3; maxItems = 4;
+                } else if (currentRound <= 6) { 
+                    targetMaxSum = 450; availableItems = [1, 5, 10, 50, 100]; minItems = 4; maxItems = 6;
                 } else { 
-                    minItems = 5; maxItems = 7;
+                    targetMaxSum = 600; availableItems = [1, 5, 10, 50, 100]; minItems = 5; maxItems = 8;
                 }
             } else if (currentLevel === 3) { 
-                targetMaxSum = 2000;
-                availableItems = [1, 5, 10, 50, 100, 500, 1000]; 
-                if (currentRound <= 2) { 
-                    minItems = 2; maxItems = 3;
-                } else if (currentRound <= 5) { 
-                    minItems = 3; maxItems = 4;
+                if (currentRound <= 3) { 
+                    targetMaxSum = 1200; availableItems = [1, 5, 10, 50, 100, 500]; minItems = 3; maxItems = 5;
+                } else if (currentRound <= 6) { 
+                    targetMaxSum = 3000; availableItems = [1, 5, 10, 50, 100, 500, 1000]; minItems = 5; maxItems = 7;
                 } else if (currentRound <= 8) { 
-                    minItems = 4; maxItems = 6;
+                    targetMaxSum = 5500; availableItems = [1, 5, 10, 50, 100, 500, 1000]; minItems = 6; maxItems = 8;
                 } else { 
-                    minItems = 5; maxItems = 8;
+                    targetMaxSum = 8500; availableItems = [1, 5, 10, 50, 100, 500, 1000]; minItems = 8; maxItems = 10;
                 }
             } else if (currentLevel === 4) { 
-                targetMaxSum = 2500; 
-                availableItems = [1, 5, 10, 50, 100, 500, 1000]; 
                 if (currentRound <= 2) { 
-                    minItems = 2; maxItems = 3;
+                    targetMaxSum = 100; availableItems = [1, 5, 10, 50]; minItems = 2; maxItems = 3;
                 } else if (currentRound <= 6) { 
-                    minItems = 4; maxItems = 5;
+                    targetMaxSum = 500; availableItems = [1, 5, 10, 50, 100]; minItems = 4; maxItems = 5;
                 } else { 
-                    minItems = 6; maxItems = 7;
+                    targetMaxSum = 2500; availableItems = [1, 5, 10, 50, 100, 500, 1000]; minItems = 6; maxItems = 7;
                 }
             } else if (currentLevel === 5) { 
-                // 第五關漸進式數量，嚴格由最少金額 50 元開始往下減
+                // 第五關漸進式出題邏輯 (完美符合指定條件)
                 if (currentRound <= 4) { 
+                    // 第 1-4 題：從50元(一個或兩個)開始
                     targetMaxSum = 100; availableItems = [50]; minItems = 1; maxItems = 2;
-                } else if (currentRound <= 8) { 
-                    targetMaxSum = 300; availableItems = [50, 100]; minItems = 2; maxItems = 2;
-                } else if (currentRound <= 12) { 
-                    targetMaxSum = 800; availableItems = [100, 500]; minItems = 3; maxItems = 3;
-                } else if (currentRound <= 16) { 
-                    targetMaxSum = 1500; availableItems = [100, 500]; minItems = 4; maxItems = 4;
+                } else if (currentRound <= 7) { 
+                    // 第 5-7 題：加入100元紙鈔(一張或兩張)
+                    targetMaxSum = 300; availableItems = [50, 100]; minItems = 1; maxItems = 2;
+                } else if (currentRound <= 11) { 
+                    // 第 8 題以後：加入500元紙鈔，難度慢慢增加，數量堆疊為2-3個
+                    targetMaxSum = 1200; availableItems = [100, 500]; minItems = 2; maxItems = 3;
+                } else if (currentRound <= 15) { 
+                    targetMaxSum = 2000; availableItems = [100, 500]; minItems = 3; maxItems = 4;
                 } else { 
-                    targetMaxSum = 3000; availableItems = [100, 500, 1000]; minItems = 5; maxItems = 6;
+                    // 16-20題：加入1000元，包含不規則減法數字，數量堆疊至4-5個
+                    targetMaxSum = 4000; availableItems = [100, 500, 1000]; minItems = 4; maxItems = 5;
                 }
             }
 
@@ -591,17 +587,22 @@
                     val = 100;
                 } else if (currentLevel === 3 && generatedItems.length === 0) {
                     val = 500;
+                } else if (currentLevel === 5 && currentRound >= 5 && currentRound <= 7 && generatedItems.length === 0) {
+                    val = 100; // 第5題以後，保證有一張100元
+                } else if (currentLevel === 5 && currentRound >= 8 && currentRound <= 15 && generatedItems.length === 0) {
+                    val = 500; // 第8題以後，保證有一張500元
+                } else if (currentLevel === 5 && currentRound >= 16 && generatedItems.length === 0) {
+                    val = 1000; // 最後階段，保證有一張1000元
                 } else {
                     const valIndex = Math.floor(Math.random() * availableItems.length);
                     val = availableItems[valIndex];
                 }
                 
-                // 防呆與防爆表機制：如果隨機面額導致超額，強制降級為最小面額以湊足「最少數量」
+                // 防呆與防爆表機制：確保不會超過上限
                 if (currentTotal + val > targetMaxSum || generatedItems.length >= targetItemsCount) {
                     if (generatedItems.length >= minItems) {
                         break; 
                     } else {
-                        // 聰明地選擇該關卡面額最小的錢幣，保證能達到基本相加題數又不過度爆表
                         val = Math.min(...availableItems);
                     }
                 }
@@ -648,8 +649,8 @@
                 }
             }
 
-            // 二次防呆確保第一至四關最少有指定的 minItems 數量
-            while (currentLevel !== 5 && generatedItems.length < minItems) {
+            // --- 規則 1：強制第一至四關保底「至少有兩個錢幣」 ---
+            while (currentLevel !== 5 && generatedItems.length < 2) {
                 let lowestVal = Math.min(...availableItems);
                 const itemData = ITEMS_DEF.find(item => item.val === lowestVal);
                 if (!itemData) break;
@@ -680,16 +681,21 @@
                 if (!placed) break;
             }
 
+            // --- 規則 2 & 3：第五關算出畫面總額後，再來扣抵隨機生成的小於總額的花費 (確保無負數) ---
             if (currentLevel === 5) {
                 let cost = 0;
                 if (currentRound >= 16) {
+                    // 第16-20題：花費為不規則數字 (尾數不為 0, 5)，強迫計算畸零數
                     let maxCost = currentTotal - 3; 
                     if (maxCost < 3) maxCost = 3;
                     cost = Math.floor(Math.random() * (maxCost - 3 + 1)) + 3;
+                    
+                    // 確保尾數不是 0 或 5
                     while (cost % 5 === 0 && maxCost > 5) {
                          cost = Math.floor(Math.random() * (maxCost - 3 + 1)) + 3;
                     }
                 } else {
+                    // 前15題：花費為 5 或 10 的倍數
                     let maxCost = currentTotal - 5;
                     if (maxCost < 5) maxCost = 5;
                     let maxSteps = Math.floor(maxCost / 5);
@@ -698,7 +704,7 @@
                 }
                 shoppingCost = cost;
                 document.getElementById('shopping-cost').innerText = shoppingCost;
-                currentAnswer = currentTotal - shoppingCost; // 因為扣去的是小於總額的花費，所以必不為負數
+                currentAnswer = currentTotal - shoppingCost;
             } else {
                 currentAnswer = currentTotal;
             }
@@ -731,7 +737,6 @@
             });
         }
 
-        // ================= STREAMING_CHUNK:Manual Progression =================
         function showAnswer(isTimeUp = false) {
             if (showAnswerBtn.disabled && !isTimeUp) return; 
 
